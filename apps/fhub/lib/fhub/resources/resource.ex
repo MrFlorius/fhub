@@ -6,7 +6,6 @@ defmodule Fhub.Resources.Resource do
   @foreign_key_type :binary_id
 
   schema "resources" do
-    field :domain, {:array, :string}
     field :deleted, :boolean
 
     many_to_many :permissions, Fhub.AccessControl.Permission, join_through: "permission_actors"

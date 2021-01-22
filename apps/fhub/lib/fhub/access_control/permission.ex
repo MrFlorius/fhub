@@ -3,15 +3,14 @@ defmodule Fhub.AccessControl.Permission do
   use Arbor.Tree
   import Ecto.Changeset
 
-  @primary_key {:id, :binary_id, autogenerate: true}
+  @primary_key {:id, :binary_id, autogenerate: false}
   @foreign_key_type :binary_id
 
   schema "permissions" do
+    belongs_to :resource, Fhub.Resources.Resource, primary_key: true, foreign_key: :id, define_field: false
+
     field :can, {:array, :string}
-
     belongs_to :parent, __MODULE__
-    belongs_to :resource, Fhub.Resources.Resource
-
     many_to_many :actors, Fhub.Resources.Resource, join_through: "permission_actors"
 
     timestamps()

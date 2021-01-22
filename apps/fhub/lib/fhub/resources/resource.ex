@@ -9,6 +9,8 @@ defmodule Fhub.Resources.Resource do
     field :domain, {:array, :string}
     field :deleted, :boolean
 
+    many_to_many :permissions, Fhub.AccessControl.Permission, join_through: "permission_actors"
+
     timestamps()
   end
 

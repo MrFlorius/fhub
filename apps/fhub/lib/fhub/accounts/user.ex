@@ -7,7 +7,7 @@ defmodule Fhub.Accounts.User do
   schema "users" do
     field :email, :string
     field :name, :string
-    # field :resource_id, :binary_id
+
     belongs_to :resource, Fhub.Resources.Resource
 
     timestamps()
@@ -17,6 +17,7 @@ defmodule Fhub.Accounts.User do
   def changeset(user, attrs) do
     user
     |> cast(attrs, [:email, :name])
+    |> cast_assoc(:resource, with: &Fhub.Resources.Resource.changeset/2)
     |> validate_required([:email, :name])
   end
 end

@@ -9,9 +9,10 @@ defmodule Fhub.AccessControl.Permission do
   schema "permissions" do
     field :can, {:array, :string}
 
-    belongs_to :actor, Fhub.Resources.Resource
     belongs_to :parent, __MODULE__
     belongs_to :resource, Fhub.Resources.Resource
+
+    many_to_many :actors, Fhub.Resources.Resource, join_through: "permission_actors"
 
     timestamps()
   end
@@ -19,7 +20,8 @@ defmodule Fhub.AccessControl.Permission do
   @doc false
   def changeset(permission, attrs) do
     permission
-    |> cast(attrs, [:can])
-    |> validate_required([:can])
+    |> cast(attrs, [:can, :actor_id, :parent_id])
+    |> cast_assoc(:resource, with: &Fhub.Resources.Resource.changeset/2)
+    |> validate_required([:can, :actor_id, :parent_id])
   end
 end

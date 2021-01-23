@@ -11,7 +11,8 @@ defmodule Fhub.Resources.Resource do
 
     belongs_to :parent, __MODULE__
 
-    many_to_many :permissions, Fhub.AccessControl.Permission, join_through: "permission_actors"
+    has_many :permissions, Fhub.AccessControl.Permission
+    many_to_many :permissions_as_actor, Fhub.AccessControl.Permission, join_through: "permissions_actors"
 
     timestamps()
   end

@@ -103,4 +103,24 @@ defmodule Fhub.AccessControl do
   def change_permission(%Permission{} = permission, attrs \\ %{}) do
     Permission.changeset(permission, attrs)
   end
+
+  def assign_actors(%Permission{} = permission, actors \\ []) do
+    permission
+    |> Repo.preload(:actors)
+    |> change_permission()
+    |> Ecto.Changeset.put_assoc(:actors, actors)
+    |> Repo.update()
+  end
+
+  def add_actors(%Permission{} = permission, actors \\ []) do
+    p = Repo.preload(permission, :actors)
+
+    assign_actors(p, actors ++ p.actors)
+  end
+
+  def remove_actors(%Permission{} = permission, actors \\ []) do
+    p = Repo.preload(permission, :actors)
+
+    assign_actors(p, p.actors -- actors)
+  end
 end

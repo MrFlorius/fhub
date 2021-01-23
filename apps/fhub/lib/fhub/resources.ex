@@ -101,4 +101,35 @@ defmodule Fhub.Resources do
   def change_resource(%Resource{} = resource, attrs \\ %{}) do
     Resource.changeset(resource, attrs)
   end
+
+  def get_resource_tree_branch(%Resource{} = resource),
+    do: get_resource_ancestors(resource) ++ [resource] ++ get_resource_descendants(resource)
+
+  def get_resource_ancestors(%Resource{} = resource, include \\ false) do
+    b = resource
+    |> Resource.ancestors()
+    |> Repo.all()
+
+    if include, do: b ++ [resource], else: b
+  end
+
+  def get_resource_descendants(%Resource{} = resource, include \\ false) do
+    b = resource
+    |> Resource.descendants()
+    |> Repo.all()
+
+    if include, do: [resource | b], else: b
+  end
+
+  def get_resource_parent(%Resource{} = resource) do
+    resource
+    |> Resource.parent()
+    |> Repo.one()
+  end
+
+  def get_recource_children(%Resource{} = resource) do
+    resource
+    |> Resource.children()
+    |> Repo.all()
+  end
 end

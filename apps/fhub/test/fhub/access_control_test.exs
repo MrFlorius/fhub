@@ -1,7 +1,10 @@
 defmodule Fhub.AccessControlTest do
   use Fhub.DataCase
 
+  alias Fhub.Resources
+  alias Fhub.Accounts
   alias Fhub.AccessControl
+  alias Fhub.AccessControl.Checker
 
   describe "permissions" do
     alias Fhub.AccessControl.Permission
@@ -40,13 +43,19 @@ defmodule Fhub.AccessControlTest do
 
     test "update_permission/2 with valid data updates the permission" do
       permission = permission_fixture()
-      assert {:ok, %Permission{} = permission} = AccessControl.update_permission(permission, @update_attrs)
+
+      assert {:ok, %Permission{} = permission} =
+               AccessControl.update_permission(permission, @update_attrs)
+
       assert permission.can == @update_attrs.can
     end
 
     test "update_permission/2 with invalid data returns error changeset" do
       permission = permission_fixture()
-      assert {:error, %Ecto.Changeset{}} = AccessControl.update_permission(permission, @invalid_attrs)
+
+      assert {:error, %Ecto.Changeset{}} =
+               AccessControl.update_permission(permission, @invalid_attrs)
+
       assert permission == AccessControl.get_permission!(permission.id)
     end
 
@@ -59,6 +68,42 @@ defmodule Fhub.AccessControlTest do
     test "change_permission/1 returns a permission changeset" do
       permission = permission_fixture()
       assert %Ecto.Changeset{} = AccessControl.change_permission(permission)
+    end
+  end
+
+  describe "checker" do
+    def fixture() do
+      # creating resources
+      {:ok, root} = Resources.create_resource(%{name: "root"})
+      {:ok, accounts} = Resources.create_resource(%{name: "accounts", parent_id: root.id})
+
+      # creating users
+      {:ok, user} =
+        Accounts.create_user(%{
+          resource: %{parent_id: accounts.id},
+          name: "florius",
+          email: "vadim.tsvetkov80@gmail.com"
+        })
+
+      {:ok, root_permission} =
+        AccessControl.create_permission(%{
+          can: ["create", "read", "update", "delete"],
+          resource_id: root.id
+        })
+
+      # creating permissions
+      {:ok, root_permission} = AccessControl.add_actors(root_permission, [root])
+
+      %{resources: %{root: root, accounts: accounts}, actors: [user, root]}
+    end
+
+    test "check?/3 returns valid results" do
+      %{resources: %{root: root, accounts: accounts}, actors: [user, root]} = fixture()
+      assert Checker.check?(root, root, "read") == true
+      assert Checker.check?(accounts, root, "read") == true
+      assert Checker.check?(root, root, "any action") == true
+
+      assert Checker.check?(root, user, "delete") == false
     end
   end
 end

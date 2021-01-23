@@ -19,4 +19,20 @@ alias Fhub.Resources
 # accounts
 alias Fhub.Accounts
 
-{:ok, user} = Accounts.create_user(%{resource: %{parent_id: accounts.id}, name: "florius", email: "vadim.tsvetkov80@gmail.com"})
+{:ok, user} =
+  Accounts.create_user(%{
+    resource: %{parent_id: accounts.id},
+    name: "florius",
+    email: "vadim.tsvetkov80@gmail.com"
+  })
+
+# permissions
+alias Fhub.AccessControl
+
+{:ok, root_permission} =
+  AccessControl.create_permission(%{
+    can: ["create", "read", "update", "delete"],
+    resource_id: root.id,
+  })
+
+{:ok, root_permission} = AccessControl.add_actors(root_permission, [root])

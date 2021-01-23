@@ -6,9 +6,9 @@ defmodule Fhub.AccountsTest do
   describe "users" do
     alias Fhub.Accounts.User
 
-    @valid_attrs %{email: "some email", name: "some name"}
+    @valid_attrs %{resource: %{}, email: "some email", name: "some name"}
     @update_attrs %{email: "some updated email", name: "some updated name"}
-    @invalid_attrs %{email: nil, name: nil}
+    @invalid_attrs %{resource: %{}, email: nil, name: nil}
 
     def user_fixture(attrs \\ %{}) do
       {:ok, user} =

@@ -6,9 +6,9 @@ defmodule Fhub.AccessControlTest do
   describe "permissions" do
     alias Fhub.AccessControl.Permission
 
-    @valid_attrs %{can: []}
-    @update_attrs %{can: []}
-    @invalid_attrs %{can: nil}
+    @valid_attrs %{resource: %{}, can: ["some"]}
+    @update_attrs %{can: ["some other"]}
+    @invalid_attrs %{resource: %{}, can: nil}
 
     def permission_fixture(attrs \\ %{}) do
       {:ok, permission} =
@@ -31,7 +31,7 @@ defmodule Fhub.AccessControlTest do
 
     test "create_permission/1 with valid data creates a permission" do
       assert {:ok, %Permission{} = permission} = AccessControl.create_permission(@valid_attrs)
-      assert permission.can == []
+      assert permission.can == @valid_attrs.can
     end
 
     test "create_permission/1 with invalid data returns error changeset" do
@@ -41,7 +41,7 @@ defmodule Fhub.AccessControlTest do
     test "update_permission/2 with valid data updates the permission" do
       permission = permission_fixture()
       assert {:ok, %Permission{} = permission} = AccessControl.update_permission(permission, @update_attrs)
-      assert permission.can == []
+      assert permission.can == @update_attrs.can
     end
 
     test "update_permission/2 with invalid data returns error changeset" do

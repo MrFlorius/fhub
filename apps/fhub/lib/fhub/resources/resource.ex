@@ -7,6 +7,8 @@ defmodule Fhub.Resources.Resource do
   @foreign_key_type :binary_id
 
   schema "resources" do
+    field :name, :string, default: nil
+
     belongs_to :parent, __MODULE__
 
     many_to_many :permissions, Fhub.AccessControl.Permission, join_through: "permission_actors"
@@ -17,7 +19,8 @@ defmodule Fhub.Resources.Resource do
   @doc false
   def changeset(resource, attrs) do
     resource
-    |> cast(attrs, [])
+    |> cast(attrs, [:name, :parent_id])
+    |> cast_assoc(:parent, with: &changeset/2)
     |> validate_required([])
   end
 end

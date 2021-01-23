@@ -18,7 +18,9 @@ defmodule Fhub.Accounts do
 
   """
   def list_users do
-    Repo.all(User)
+    User
+    |> Repo.all()
+    |> Repo.preload(:resource)
   end
 
   @doc """
@@ -35,7 +37,7 @@ defmodule Fhub.Accounts do
       ** (Ecto.NoResultsError)
 
   """
-  def get_user!(id), do: Repo.get!(User, id)
+  def get_user!(id), do: Repo.get!(User, id) |> Repo.preload(:resource)
 
   @doc """
   Creates a user.
@@ -50,13 +52,8 @@ defmodule Fhub.Accounts do
 
   """
   def create_user(attrs \\ %{}) do
-    r = case Map.keys(attrs) do
-      [x | _] when is_bitstring(x) -> "resource"
-      _ -> :resource
-    end
-
     %User{}
-    |> User.changeset(Map.put(attrs, r, %{}))
+    |> User.changeset(attrs)
     |> Repo.insert()
   end
 

@@ -18,7 +18,9 @@ defmodule Fhub.AccessControl do
 
   """
   def list_permissions do
-    Repo.all(Permission)
+    Permission
+    |> Repo.all()
+    |> Repo.preload(:resource)
   end
 
   @doc """
@@ -35,7 +37,7 @@ defmodule Fhub.AccessControl do
       ** (Ecto.NoResultsError)
 
   """
-  def get_permission!(id), do: Repo.get!(Permission, id)
+  def get_permission!(id), do: Repo.get!(Permission, id) |> Repo.preload(:resource)
 
   @doc """
   Creates a permission.
@@ -50,7 +52,7 @@ defmodule Fhub.AccessControl do
 
   """
   def create_permission(attrs \\ %{}) do
-    %Permission{resource: %{}}
+    %Permission{}
     |> Permission.changeset(attrs)
     |> Repo.insert()
   end

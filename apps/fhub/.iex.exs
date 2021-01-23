@@ -1,3 +1,5 @@
+alias Fhub.Repo
+
 alias Fhub.AccessControl
 alias Fhub.Accounts
 alias Fhub.Resources

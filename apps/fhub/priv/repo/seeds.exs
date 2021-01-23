@@ -9,3 +9,14 @@
 #
 # We recommend using the bang functions (`insert!`, `update!`
 # and so on) as they will fail if something goes wrong.
+
+# resources
+alias Fhub.Resources
+
+{:ok, root} = Resources.create_resource(%{name: "root"})
+{:ok, accounts} = Resources.create_resource(%{name: "accounts", parent_id: root.id})
+
+# accounts
+alias Fhub.Accounts
+
+{:ok, user} = Accounts.create_user(%{resource: %{parent_id: accounts.id}, name: "florius", email: "vadim.tsvetkov80@gmail.com"})

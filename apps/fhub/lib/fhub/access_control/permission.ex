@@ -17,8 +17,8 @@ defmodule Fhub.AccessControl.Permission do
   @doc false
   def changeset(permission, attrs) do
     permission
-    |> cast(attrs, [:can, :parent_id, :resource_id])
-    |> cast_assoc(:resource, with: &Fhub.Resources.Resource.changeset/2)
+    |> cast(attrs, [:can])
     |> validate_required([:can])
+    |> cast_assoc(:resource, with: &Fhub.Resources.Resource.changeset/2)
   end
 end

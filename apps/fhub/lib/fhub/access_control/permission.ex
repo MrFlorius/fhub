@@ -6,7 +6,7 @@ defmodule Fhub.AccessControl.Permission do
   @foreign_key_type :binary_id
 
   schema "permissions" do
-    field :can, {:array, :string}
+    field :can, EctoTerm
 
     belongs_to :resource, Fhub.Resources.Resource, on_replace: :mark_as_invalid
     many_to_many :actors, Fhub.Resources.Resource, join_through: "permissions_actors"

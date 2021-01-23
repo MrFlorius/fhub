@@ -6,7 +6,7 @@ defmodule Fhub.AccessControl.Permission do
   @foreign_key_type :binary_id
 
   schema "permissions" do
-    belongs_to :resource, Fhub.Resources.Resource, primary_key: true, foreign_key: :id, define_field: false
+    belongs_to :resource, Fhub.Resources.Resource, primary_key: true, foreign_key: :id, define_field: false, on_replace: :mark_as_invalid
 
     field :can, {:array, :string}
     many_to_many :actors, Fhub.Resources.Resource, join_through: "permission_actors"

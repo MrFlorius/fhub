@@ -6,10 +6,10 @@ defmodule Fhub.Accounts.User do
   @foreign_key_type :binary_id
 
   schema "users" do
+    belongs_to :resource, Fhub.Resources.Resource, primary_key: true, foreign_key: :id, define_field: false, on_replace: :mark_as_invalid
+    
     field :email, :string
     field :name, :string
-
-    belongs_to :resource, Fhub.Resources.Resource, primary_key: true, foreign_key: :id, define_field: false
 
     timestamps()
   end
@@ -18,7 +18,7 @@ defmodule Fhub.Accounts.User do
   def changeset(user, attrs) do
     user
     |> cast(attrs, [:email, :name])
-    |> cast_assoc(:resource, with: &Fhub.Resources.Resource.changeset/2)
     |> validate_required([:email, :name])
+    |> cast_assoc(:resource, with: &Fhub.Resources.Resource.changeset/2)
   end
 end

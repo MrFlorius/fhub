@@ -17,7 +17,7 @@ defmodule Fhub.Resources.Resource do
   @doc false
   def changeset(resource, attrs) do
     resource
-    |> cast(attrs, [:domain])
-    |> validate_required([:domain])
+    |> cast(attrs, [])
+    |> validate_required([])
   end
 end

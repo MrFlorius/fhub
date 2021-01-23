@@ -50,7 +50,7 @@ defmodule Fhub.AccessControl do
 
   """
   def create_permission(attrs \\ %{}) do
-    %Permission{}
+    %Permission{resource: %{}}
     |> Permission.changeset(attrs)
     |> Repo.insert()
   end

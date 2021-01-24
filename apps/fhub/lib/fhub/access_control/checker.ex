@@ -35,6 +35,7 @@ defmodule Fhub.AccessControl.Checker do
   defp check_pair(%Permission{resource_id: r_id}, %Permission{resource_id: r_id}), do: true
   defp check_pair(_, _), do: false
 
+  # todo: add a behaviour or protocol for resources to get the resource
   defp get_resource(something) do
     case something do
       %Resource{} = r ->

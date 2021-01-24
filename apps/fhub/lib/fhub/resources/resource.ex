@@ -6,6 +6,7 @@ defmodule Fhub.Resources.Resource do
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
 
+
   schema "resources" do
     field :name, :string, default: nil
 

@@ -4,7 +4,7 @@ defimpl Fhub.Resources.TreeProtocol, for: Any do
   alias Fhub.Resources.ResourceProtocol
 
   def tree_branch(r),
-    do: ancestors(ResourceProtocol.resource(r)) ++ [ResourceProtocol.resource(r)] ++ descendants(ResourceProtocol.resource(r))
+    do: ancestors(r) ++ [ResourceProtocol.resource(r)] ++ descendants(r)
 
   def ancestors(r, include \\ false) do
     b =

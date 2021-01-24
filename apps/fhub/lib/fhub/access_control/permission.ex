@@ -14,6 +14,9 @@ defmodule Fhub.AccessControl.Permission do
     timestamps()
   end
 
+  def access_any, do: :any
+  def access_none, do: :none
+
   @doc false
   def changeset(permission, attrs) do
     permission

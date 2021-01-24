@@ -87,7 +87,7 @@ defmodule Fhub.AccessControlTest do
 
       {:ok, root_permission} =
         AccessControl.create_permission(%{
-          can: ["create", "read", "update", "delete"],
+          can: AccessControl.Permission.access_any(),
           resource_id: root.id
         })
 
@@ -99,11 +99,11 @@ defmodule Fhub.AccessControlTest do
 
     test "check?/3 returns valid results" do
       %{resources: %{root: root, accounts: accounts}, actors: [user, root]} = fixture()
-      assert Checker.check?(root, root, "read") == true
-      assert Checker.check?(accounts, root, "read") == true
-      assert Checker.check?(root, root, "any action") == true
+      assert Checker.check?(root, root, :read) == true
+      assert Checker.check?(accounts, root, :read) == true
+      assert Checker.check?(root, root, :read) == true
 
-      assert Checker.check?(root, user, "delete") == false
+      assert Checker.check?(root, user, :delete) == false
     end
   end
 end

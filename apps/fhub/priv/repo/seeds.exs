@@ -31,7 +31,7 @@ alias Fhub.AccessControl
 
 {:ok, root_permission} =
   AccessControl.create_permission(%{
-    can: AccessControl.Permission.access_any(),
+    can: [AccessControl.Permission.access_any()],
     resource_id: root.id
   })
 

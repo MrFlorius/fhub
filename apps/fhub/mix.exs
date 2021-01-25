@@ -41,7 +41,8 @@ defmodule Fhub.MixProject do
       {:postgrex, ">= 0.0.0"},
       {:jason, "~> 1.0"},
       {:arbor, "~> 1.1.0"},
-      {:ecto_term, in_umbrella: true}
+      {:ecto_term, in_umbrella: true},
+      {:ecto_atom, in_umbrella: true}
     ]
   end
 

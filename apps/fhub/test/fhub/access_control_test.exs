@@ -9,8 +9,8 @@ defmodule Fhub.AccessControlTest do
   describe "permissions" do
     alias Fhub.AccessControl.Permission
 
-    @valid_attrs %{resource: %{}, can: ["some"]}
-    @update_attrs %{can: ["some other"]}
+    @valid_attrs %{resource: %{}, can: [:some]}
+    @update_attrs %{can: [:other]}
     @invalid_attrs %{resource: %{}, can: nil}
 
     def permission_fixture(attrs \\ %{}) do
@@ -87,7 +87,7 @@ defmodule Fhub.AccessControlTest do
 
       {:ok, root_permission} =
         AccessControl.create_permission(%{
-          can: AccessControl.Permission.access_any(),
+          can: [AccessControl.Permission.access_any()],
           resource_id: root.id
         })
 

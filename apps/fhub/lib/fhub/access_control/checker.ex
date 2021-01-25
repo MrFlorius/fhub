@@ -37,8 +37,8 @@ defmodule Fhub.AccessControl.Checker do
   defp do_check_cartesian(resource_permissions, actor_permissions, action) do
     for rp <- resource_permissions, ap <- actor_permissions, check_pair(rp, ap) do
       cond do
-        ap.can == Permission.access_none() -> false
-        ap.can == Permission.access_any() -> true
+        Enum.member?(ap.can, Permission.access_none()) -> false
+        Enum.member?(ap.can, Permission.access_any()) -> true
         rp.id == ap.id -> true
         Enum.member?(rp.can, action) and Enum.member?(ap.can, action) -> true
         true -> false

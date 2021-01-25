@@ -1,38 +1,37 @@
 defimpl Fhub.Resources.TreeProtocol, for: Any do
-  alias Fhub.Repo
   alias Fhub.Resources.Resource
   alias Fhub.Resources.ResourceProtocol
 
-  def tree_branch(r),
-    do: ancestors(r) ++ [ResourceProtocol.resource(r)] ++ descendants(r)
+  def tree_branch(r, repo),
+    do: ancestors(r, false, repo) ++ [ResourceProtocol.resource(r, repo)] ++ descendants(r, false, repo)
 
-  def ancestors(r, include \\ false) do
+  def ancestors(r, include, repo) do
     b =
       ResourceProtocol.resource(r)
       |> Resource.ancestors()
-      |> Repo.all()
+      |> repo.all()
 
     if include, do: b ++ [ResourceProtocol.resource(r)], else: b
   end
 
-  def descendants(r, include \\ false) do
+  def descendants(r, include, repo) do
     b =
       ResourceProtocol.resource(r)
       |> Resource.descendants()
-      |> Repo.all()
+      |> repo.all()
 
     if include, do: [ResourceProtocol.resource(r) | b], else: b
   end
 
-  def parent(r) do
+  def parent(r, repo) do
     ResourceProtocol.resource(r)
     |> Resource.parent()
-    |> Repo.one()
+    |> repo.one()
   end
 
-  def children(r) do
+  def children(r, repo) do
     ResourceProtocol.resource(r)
     |> Resource.children()
-    |> Repo.all()
+    |> repo.all()
   end
 end

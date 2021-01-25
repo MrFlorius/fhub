@@ -4,5 +4,5 @@ defprotocol Fhub.Resources.ResourceProtocol do
   All functions returns resources
   """
   @spec resource(any) :: Fhub.Resources.Resource.t()
-  def resource(term)
+  def resource(term, repo \\ Fhub.Repo)
 end

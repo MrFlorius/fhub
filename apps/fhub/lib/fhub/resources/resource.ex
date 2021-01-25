@@ -7,7 +7,7 @@ defmodule Fhub.Resources.Resource do
   @foreign_key_type :binary_id
 
   @derive Fhub.Resources.TreeProtocol
-  
+
   schema "resources" do
     field :name, :string, default: nil
 

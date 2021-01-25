@@ -99,11 +99,20 @@ defmodule Fhub.AccessControlTest do
 
     test "check?/3 returns valid results" do
       %{resources: %{root: root, accounts: accounts}, actors: [user, root]} = fixture()
+
       assert Checker.check?(root, root, :read) == true
       assert Checker.check?(accounts, root, :read) == true
-      assert Checker.check?(root, root, :read) == true
 
       assert Checker.check?(root, user, :delete) == false
+    end
+
+    test "permit/3 works" do
+      %{resources: %{root: root, accounts: accounts}, actors: [user, root]} = fixture()
+
+      assert Checker.permit(root, root, :read) == {:ok, root}
+      assert Checker.permit(accounts, root, :read) == {:ok, accounts}
+
+      assert Checker.permit(root, user, :delete) == {:error, :forbidden}
     end
   end
 end

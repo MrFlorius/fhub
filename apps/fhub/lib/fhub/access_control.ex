@@ -8,6 +8,8 @@ defmodule Fhub.AccessControl do
 
   alias Fhub.AccessControl.Permission
 
+  defdelegate permit(resource, actor, action), to: Fhub.AccessControl.Checker
+
   @doc """
   Returns the list of permissions.
 

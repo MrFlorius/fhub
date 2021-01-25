@@ -6,6 +6,14 @@ defmodule Fhub.AccessControl.Checker do
   alias Fhub.Resources.ResourceProtocol
   alias Fhub.Resources.TreeProtocol
 
+  def permit(resource, actor, action) do
+    if check?(resource, actor, action) do
+      {:ok, resource}
+    else
+      {:error, :forbidden}
+    end
+  end
+
   def check?(resource, actor, action) do
     do_check?(
       ResourceProtocol.resource(resource),

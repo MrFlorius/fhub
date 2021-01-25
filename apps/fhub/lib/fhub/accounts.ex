@@ -7,6 +7,7 @@ defmodule Fhub.Accounts do
   alias Fhub.Repo
 
   alias Fhub.Accounts.User
+  alias Fhub.AccessControl
 
   @doc """
   Returns the list of users.
@@ -38,6 +39,11 @@ defmodule Fhub.Accounts do
 
   """
   def get_user!(id), do: Repo.get!(User, id) |> Repo.preload(:resource)
+
+  def get_user(actor, id) do
+    Repo.get(User, id)
+    |> AccessControl.permit(actor, :read)
+  end
 
   @doc """
   Creates a user.

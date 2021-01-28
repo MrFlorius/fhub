@@ -1,6 +1,6 @@
 defmodule Fhub.AccessControl.Context do
   defmacro __using__(opts) do
-    [module: m, single: s, plural: p, changeset_fun: _c] = parse_opts(opts)
+    [module: m, single: s, plural: p] = parse_opts(opts)
 
     quote do
       def unquote(:"list_#{p}")(actor) do
@@ -35,7 +35,7 @@ defmodule Fhub.AccessControl.Context do
         Fhub.AccessControl.Transactions.operation(
           fn repo, _ ->
             struct(unquote(m))
-            |> unquote(m).changeset(attrs)
+            |> unquote(:"change_#{s}")(attrs)
             |> repo.insert()
           end,
           actor,
@@ -47,7 +47,7 @@ defmodule Fhub.AccessControl.Context do
         Fhub.AccessControl.Transactions.operation(
           fn repo, _ ->
             s
-            |> unquote(m).changeset(attrs)
+            |> unquote(:"change_#{s}")(attrs)
             |> repo.update()
           end,
           actor,
@@ -88,7 +88,6 @@ defmodule Fhub.AccessControl.Context do
       module: alias,
       single: single(opts, alias),
       plural: plural(opts, alias),
-      changeset_fun: changeset_fun(opts, alias)
     ]
   end
 
@@ -104,13 +103,5 @@ defmodule Fhub.AccessControl.Context do
 
   defp plural(opts, alias) do
     Keyword.get(opts, :plural, "#{single(opts, alias)}s")
-  end
-
-  defp changeset_fun(opts, alias) do
-    Keyword.get(
-      opts,
-      :changeset_fun,
-      :"change_#{single(opts, alias)}"
-    )
   end
 end

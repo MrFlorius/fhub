@@ -40,7 +40,6 @@ defmodule Fhub.Resources do
     Repo.get_by(Resource, attrs)
   end
 
-  def get_resource_for_schema(_, _, attrs), do: get_resource_by(attrs)
 
   @doc """
   Creates a resource.

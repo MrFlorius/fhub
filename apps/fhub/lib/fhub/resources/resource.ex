@@ -24,6 +24,5 @@ defmodule Fhub.Resources.Resource do
     resource
     |> cast(attrs, [:name, :parent_id])
     |> cast_assoc(:parent, with: &changeset/2)
-    |> validate_required([])
   end
 end

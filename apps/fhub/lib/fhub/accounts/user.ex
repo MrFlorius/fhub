@@ -9,11 +9,10 @@ defmodule Fhub.Accounts.User do
 
   schema "users" do
     belongs_to :resource, Fhub.Resources.Resource,
-      [primary_key: true,
+      primary_key: true,
       foreign_key: :id,
       define_field: false,
-      on_replace: :mark_as_invalid,
-      defaults: {Fhub.Resources, :get_resource_for_schema, [%{name: "accounts"}]}]
+      on_replace: :mark_as_invalid
 
     field :email, :string
     field :name, :string
@@ -26,6 +25,5 @@ defmodule Fhub.Accounts.User do
     user
     |> cast(attrs, [:email, :name])
     |> validate_required([:email, :name])
-    |> cast_assoc(:resource, with: &Fhub.Resources.Resource.changeset/2)
   end
 end

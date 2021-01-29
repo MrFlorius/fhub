@@ -1,6 +1,6 @@
 defmodule Fhub.AccessControl.Context do
   defmacro __using__(opts) do
-    [module: m, single: s, plural: p, resource_field: r] = parse_opts(opts)
+    [module: m, single: s, plural: p, resource_field: r, resource_parent: n] = parse_opts(opts)
 
     quote do
       def unquote(:"list_#{p}")(actor) do
@@ -34,11 +34,12 @@ defmodule Fhub.AccessControl.Context do
       def unquote(:"create_#{s}")(attrs \\ %{}, actor) do
         Fhub.AccessControl.Transactions.operation(
           fn repo, _ ->
-            association = Ecto.build_assoc(struct(unquote(m)), unquote(r))
+            s = struct(unquote(m))
 
-            struct(unquote(m))
+            s
             |> unquote(:"change_#{s}")(attrs)
-            |> Ecto.Changeset.put_assoc(unquote(r), association)
+            |> Ecto.Changeset.change(%{unquote(r) => unquote(:"build_resource_for_#{s}")(s, actor)})
+            |> Ecto.Changeset.cast_assoc(unquote(r), with: &Fhub.Resources.Resource.changeset/2)
             |> repo.insert()
           end,
           actor,
@@ -70,6 +71,11 @@ defmodule Fhub.AccessControl.Context do
         unquote(m).changeset(s, attrs)
       end
 
+      def unquote(:"build_resource_for_#{s}")(s = %unquote(m){}, _actor) do
+        r = Fhub.Resources.get_resource_by(%{name: unquote(n)})
+        %Fhub.Resources.Resource{parent_id: r.id}
+      end
+
       defoverridable [
         {unquote(:"list_#{p}"),   1},
         {unquote(:"get_#{s}"),    2},
@@ -80,6 +86,7 @@ defmodule Fhub.AccessControl.Context do
         {unquote(:"delete_#{s}"), 2},
         {unquote(:"change_#{s}"), 1},
         {unquote(:"change_#{s}"), 2},
+        {unquote(:"build_resource_for_#{s}"), 2}
       ]
     end
   end
@@ -91,7 +98,8 @@ defmodule Fhub.AccessControl.Context do
       module: alias,
       single: single(opts, alias),
       plural: plural(opts, alias),
-      resource_field: Keyword.get(opts, :resource_field, :resource)
+      resource_field: Keyword.get(opts, :resource_field, :resource),
+      resource_parent: Keyword.fetch!(opts, :resource_parent)
     ]
   end
 

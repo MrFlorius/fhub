@@ -13,5 +13,6 @@ defmodule Fhub.Repo.Migrations.CreateResources do
     end
 
     create index(:resources, [:parent_id])
+    create unique_index(:resources, [:name])
   end
 end

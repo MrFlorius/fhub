@@ -1,6 +1,6 @@
 defmodule Fhub.AccessControl.Context do
   defmacro __using__(opts) do
-    [module: m, single: s, plural: p] = parse_opts(opts)
+    [module: m, single: s, plural: p, resource_field: r] = parse_opts(opts)
 
     quote do
       def unquote(:"list_#{p}")(actor) do
@@ -34,8 +34,11 @@ defmodule Fhub.AccessControl.Context do
       def unquote(:"create_#{s}")(attrs \\ %{}, actor) do
         Fhub.AccessControl.Transactions.operation(
           fn repo, _ ->
+            association = Ecto.build_assoc(struct(unquote(m)), unquote(r))
+
             struct(unquote(m))
             |> unquote(:"change_#{s}")(attrs)
+            |> Ecto.Changeset.put_assoc(unquote(r), association)
             |> repo.insert()
           end,
           actor,
@@ -88,6 +91,7 @@ defmodule Fhub.AccessControl.Context do
       module: alias,
       single: single(opts, alias),
       plural: plural(opts, alias),
+      resource_field: Keyword.get(opts, :resource_field, :resource)
     ]
   end
 

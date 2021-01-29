@@ -29,7 +29,7 @@ defimpl Fhub.Resources.TreeProtocol, for: Any do
     if include do
       tree_like(resource, b)
     else
-      {^r, descs} = tree_like(resource, b)
+      [^r, descs] = tree_like(resource, b)
       descs
     end
   end
@@ -40,7 +40,7 @@ defimpl Fhub.Resources.TreeProtocol, for: Any do
       #   r
 
       {descendants, non_descendants} ->
-        {r, Enum.map(descendants, fn x -> tree_like(x, non_descendants) end)}
+        [r, Enum.map(descendants, fn x -> tree_like(x, non_descendants) end)]
     end
   end
 

@@ -22,9 +22,9 @@ defmodule Fhub.AccessControl.Transactions do
   def transaction(fun, actor, action, filter \\ false) do
     f =
       if filter do
-        fn r, o -> filter(r, o, actor, action) end
+        fn r, o -> filter(o, actor, action, r) end
       else
-        fn r, o -> check(r, o, actor, action) end
+        fn r, o -> check(o, actor, action, r) end
       end
 
     Multi.new()
@@ -32,7 +32,7 @@ defmodule Fhub.AccessControl.Transactions do
     |> Multi.run(:permitted, f)
   end
 
-  defp check(repo, %{operation: op_result}, actor, action) when is_list(op_result) do
+  defp check(%{operation: op_result}, actor, action, repo) when is_list(op_result) do
     allowed =
       op_result
       |> Enum.map(fn r -> Checker.check?(r, actor, action, repo) end)
@@ -45,7 +45,7 @@ defmodule Fhub.AccessControl.Transactions do
     end
   end
 
-  defp check(repo, %{operation: op_result}, actor, action) do
+  defp check(%{operation: op_result}, actor, action, repo) do
     if Checker.check?(op_result, actor, action, repo) do
       {:ok, op_result}
     else
@@ -53,14 +53,14 @@ defmodule Fhub.AccessControl.Transactions do
     end
   end
 
-  defp filter(repo, %{operation: op_result}, actor, action) when is_list(op_result) do
+  defp filter(%{operation: op_result}, actor, action, repo) when is_list(op_result) do
     {:ok,
      Enum.filter(op_result, fn r ->
        Checker.check?(r, actor, action, repo)
      end)}
   end
 
-  defp filter(repo, %{operation: op_result}, actor, action) do
-    filter(repo, %{operation: [op_result]}, actor, action)
+  defp filter(%{operation: op_result}, actor, action, repo) do
+    Checker.permit(op_result, actor, action, repo)
   end
 end

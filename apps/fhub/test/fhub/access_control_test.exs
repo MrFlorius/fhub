@@ -138,11 +138,11 @@ defmodule Fhub.AccessControlTest do
     test "check?/3 returns valid results" do
       %{resources: %{root: root, accounts: accounts}, actors: [user, root]} = fixture()
 
-      assert Checker.check?(root, root, :read) == true
-      assert Checker.check?(accounts, root, :read) == true
+      assert Checker.check?(root, root, :read)
+      assert Checker.check?(accounts, root, :read)
 
-      assert Checker.check?(root, user, :delete) == false
-      assert Checker.check?(root, user, :read) == true
+      assert not Checker.check?(root, user, :delete)
+      assert Checker.check?(root, user, :read)
     end
 
     test "permit/3 works" do
@@ -202,35 +202,88 @@ defmodule Fhub.AccessControlTest do
     end
   end
 
+  # Not sure about tests' structure
   describe "context logic" do
+    @valid_attrs %{email: "email", name: "name"}
+    @update_attrs %{email: "new"}
+
     defmodule TestContext do
       use Elixir.Fhub.AccessControl.Context,
-        for: Elixir.Fhub.Resources.Resource,
-        resource_parent: "accounts"
+        for: Elixir.Fhub.Accounts.User,
+        single: "resource",
+        resource_parent: "root"
+    end
+
+    def root_fixture() do
+      {:ok, root} = Resources.create_resource(%{name: "root"})
+
+      {:ok, root_permission} =
+        AccessControl.create_permission(%{
+          can: [AccessControl.Permission.access_any()],
+          resource_id: root.id
+        })
+
+      {:ok, _} = AccessControl.add_actors(root_permission, [root])
+
+      root
+    end
+
+    def resource_fixture(root) do
+      {:ok, resource} = TestContext.create_resource(@valid_attrs, root)
+      resource
     end
 
     test "build_resource_for_resource/2 returns proper resource" do
+      root = root_fixture()
+      root_id = root.id
+
+      assert match?(%Resources.Resource{parent_id: ^root_id}, TestContext.build_resource_for_resource(%Accounts.User{}, nil))
     end
 
     test "change_resource/2 returns changeset" do
+      assert match?(%Ecto.Changeset{}, TestContext.change_resource(%Accounts.User{}, %{}))
     end
 
     test "create_resource/2 creates resource if actor has permission" do
+      root = root_fixture()
+
+      assert match?({:ok, _}, TestContext.create_resource(@valid_attrs, root))
     end
 
     test "delete_resource/2 deletes resource if actor has permission" do
+      root = root_fixture()
+      resource = resource_fixture(root)
+
+      assert match?({:ok, _}, TestContext.delete_resource(resource, root))
     end
 
     test "get_resource/2 returns resource if actor has access to" do
+      root = root_fixture()
+      resource = resource_fixture(root)
+
+      assert match?({:ok, _}, TestContext.get_resource(resource.id, root))
     end
 
-    test "get_resource!/2 throws an exception" do
+    test "get_resource!/2 returns nil if resource does not exsists" do
+      root = root_fixture()
+
+      assert TestContext.get_resource!("e1d42ed2-9b1d-4145-8d3a-c601dedeb797", root) == nil
     end
 
     test "list_resources/1 returns all resources to which actor has access" do
+      root = root_fixture()
+      resource = resource_fixture(root)
+
+      {:ok, [r]} = TestContext.list_resources(root)
+
+      assert r.id == resource.id
     end
 
     test "update_resource/3 updates a resource to which actor has access" do
+      root = root_fixture()
+      resource = resource_fixture(root)
+
+      assert match?({:ok, @update_attrs}, TestContext.update_resource(resource, @update_attrs, root))
     end
   end
 

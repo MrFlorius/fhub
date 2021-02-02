@@ -20,7 +20,6 @@ defimpl Fhub.Resources.ResourceProtocol, for: Any do
     quote do
       defimpl Fhub.Resources.ResourceProtocol, for: unquote(module) do
         alias Fhub.Resources.Resource
-        alias Fhub.Repo
 
         def resource(%{unquote(res) => %Resource{} = r}, _), do: r
         def resource(%{__struct__: unquote(struct.__struct__)} = r, repo) do

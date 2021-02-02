@@ -11,7 +11,7 @@ defmodule Fhub.AccessControlTest do
 
     @valid_attrs %{resource: %{}, can: [:some]}
     @update_attrs %{can: [:other]}
-    @invalid_attrs %{resource: %{}, can: nil}
+    @invalid_attrs %{resource_id: %{}, can: nil}
 
     def permission_fixture(attrs \\ %{}) do
       {:ok, permission} =
@@ -20,6 +20,11 @@ defmodule Fhub.AccessControlTest do
         |> AccessControl.create_permission()
 
       permission
+    end
+
+    def resource_fixture() do
+      {:ok, resource} = Resources.create_resource()
+      resource
     end
 
     test "list_permissions/0 returns all permissions" do
@@ -69,6 +74,27 @@ defmodule Fhub.AccessControlTest do
       permission = permission_fixture()
       assert %Ecto.Changeset{} = AccessControl.change_permission(permission)
     end
+
+    test "add_actors/2 actually adds actors" do
+      permission = permission_fixture()
+      actor = resource_fixture()
+      {:ok, %{actors: a}} = AccessControl.add_actors(permission, [actor])
+
+      assert length(a) == 1
+    end
+
+    test "remove_actors/2 actually removes actors" do
+      permission = permission_fixture()
+      actor = resource_fixture()
+
+      {:ok, %{actors: a}} = AccessControl.remove_actors(permission, [actor])
+      assert length(a) == 0
+
+      AccessControl.add_actors(permission, [actor])
+
+      {:ok, %{actors: b}} = AccessControl.remove_actors(permission, [actor])
+      assert length(b) == 0
+    end
   end
 
   describe "checker" do
@@ -77,13 +103,7 @@ defmodule Fhub.AccessControlTest do
       {:ok, root} = Resources.create_resource(%{name: "root"})
       {:ok, accounts} = Resources.create_resource(%{name: "accounts", parent_id: root.id})
 
-      # creating users
-      {:ok, user} =
-        Accounts.create_user(%{
-          resource: %{parent_id: accounts.id},
-          name: "florius",
-          email: "vadim.tsvetkov80@gmail.com"
-        })
+      # creating permissions
 
       {:ok, root_permission} =
         AccessControl.create_permission(%{
@@ -91,8 +111,26 @@ defmodule Fhub.AccessControlTest do
           resource_id: root.id
         })
 
-      # creating permissions
-      {:ok, root_permission} = AccessControl.add_actors(root_permission, [root])
+      {:ok, user_permission} =
+        AccessControl.create_permission(%{
+          can: [:read],
+          resource_id: root.id
+        })
+
+      {:ok, _} = AccessControl.add_actors(root_permission, [root])
+
+      # creating users
+      {:ok, user} =
+        Accounts.create_user(
+          %{
+            resource: %{parent_id: accounts.id},
+            name: "florius",
+            email: "vadim.tsvetkov80@gmail.com"
+          },
+          root
+        )
+
+      {:ok, _} = AccessControl.add_actors(user_permission, [user])
 
       %{resources: %{root: root, accounts: accounts}, actors: [user, root]}
     end
@@ -104,6 +142,7 @@ defmodule Fhub.AccessControlTest do
       assert Checker.check?(accounts, root, :read) == true
 
       assert Checker.check?(root, user, :delete) == false
+      assert Checker.check?(root, user, :read) == true
     end
 
     test "permit/3 works" do
@@ -113,6 +152,88 @@ defmodule Fhub.AccessControlTest do
       assert Checker.permit(accounts, root, :read) == {:ok, accounts}
 
       assert Checker.permit(root, user, :delete) == {:error, :forbidden}
+      assert Checker.permit(root, user, :read) == {:ok, root}
     end
+  end
+
+  describe "context exports" do
+    test "TestContext case #1 got all functions defined" do
+      defmodule TestContext1 do
+        use Elixir.Fhub.AccessControl.Context,
+          for: Elixir.Fhub.Resources.Resource,
+          resource_parent: "some"
+      end
+
+      assert TestContext1.__info__(:functions) == [
+               build_resource_for_resource: 2,
+               change_resource: 1,
+               change_resource: 2,
+               create_resource: 1,
+               create_resource: 2,
+               delete_resource: 2,
+               get_resource: 2,
+               get_resource!: 2,
+               list_resources: 1,
+               update_resource: 3
+             ]
+    end
+
+    test "TestContext case #2 got all functions defined" do
+      defmodule TestContext2 do
+        use Elixir.Fhub.AccessControl.Context,
+          for: Elixir.Fhub.Resources.Resource,
+          resource_parent: "some",
+          single: "some_resource",
+          plural: "resourceces"
+      end
+
+      assert TestContext2.__info__(:functions) == [
+               build_resource_for_some_resource: 2,
+               change_some_resource: 1,
+               change_some_resource: 2,
+               create_some_resource: 1,
+               create_some_resource: 2,
+               delete_some_resource: 2,
+               get_some_resource: 2,
+               get_some_resource!: 2,
+               list_resourceces: 1,
+               update_some_resource: 3
+             ]
+    end
+  end
+
+  describe "context logic" do
+    defmodule TestContext do
+      use Elixir.Fhub.AccessControl.Context,
+        for: Elixir.Fhub.Resources.Resource,
+        resource_parent: "accounts"
+    end
+
+    test "build_resource_for_resource/2 returns proper resource" do
+    end
+
+    test "change_resource/2 returns changeset" do
+    end
+
+    test "create_resource/2 creates resource if actor has permission" do
+    end
+
+    test "delete_resource/2 deletes resource if actor has permission" do
+    end
+
+    test "get_resource/2 returns resource if actor has access to" do
+    end
+
+    test "get_resource!/2 throws an exception" do
+    end
+
+    test "list_resources/1 returns all resources to which actor has access" do
+    end
+
+    test "update_resource/3 updates a resource to which actor has access" do
+    end
+  end
+
+  describe "transactions" do
   end
 end

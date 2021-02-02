@@ -39,7 +39,6 @@ defmodule Fhub.AccessControl.Checker do
       cond do
         Enum.member?(ap.can, Permission.access_none()) -> false
         Enum.member?(ap.can, Permission.access_any()) -> true
-        rp.id == ap.id -> true
         Enum.member?(rp.can, action) and Enum.member?(ap.can, action) -> true
         true -> false
       end

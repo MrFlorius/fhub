@@ -110,19 +110,25 @@ defmodule Fhub.AccessControl do
     permission
     |> Repo.preload(:actors)
     |> change_permission()
-    |> Ecto.Changeset.put_assoc(:actors, actors)
+    |> Ecto.Changeset.put_assoc(:actors, convert_to_resource(actors))
     |> Repo.update()
   end
 
   def add_actors(%Permission{} = permission, actors \\ []) do
     p = Repo.preload(permission, :actors)
-
-    assign_actors(p, actors ++ p.actors)
+    assign_actors(p, convert_to_resource(actors) ++ p.actors)
   end
 
   def remove_actors(%Permission{} = permission, actors \\ []) do
     p = Repo.preload(permission, :actors)
+    assign_actors(p, p.actors -- convert_to_resource(actors))
+  end
 
-    assign_actors(p, p.actors -- actors)
+  defp convert_to_resource(actors) when is_list(actors) do
+    Enum.map(actors, &Fhub.Resources.ResourceProtocol.resource/1)
+  end
+
+  defp convert_to_resource(actor) do
+    Fhub.Resources.ResourceProtocol.resource(actor)
   end
 end

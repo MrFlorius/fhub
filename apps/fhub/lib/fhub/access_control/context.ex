@@ -71,6 +71,7 @@ defmodule Fhub.AccessControl.Context do
         unquote(m).changeset(s, attrs)
       end
 
+      # seems a bit clunky
       def unquote(:"build_resource_for_#{s}")(s = %unquote(m){}, _actor) do
         r = Fhub.Resources.get_resource_by(%{name: unquote(n)})
         %Fhub.Resources.Resource{parent_id: r.id}

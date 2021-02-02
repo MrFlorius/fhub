@@ -9,7 +9,7 @@ defmodule Fhub.AccessControl.Permission do
     field :can, {:array, EctoAtom}
 
     belongs_to :resource, Fhub.Resources.Resource, on_replace: :mark_as_invalid
-    many_to_many :actors, Fhub.Resources.Resource, join_through: "permissions_actors"
+    many_to_many :actors, Fhub.Resources.Resource, on_replace: :delete, join_through: "permissions_actors"
 
     timestamps()
   end

@@ -16,16 +16,6 @@ alias Fhub.Resources
 {:ok, root} = Resources.create_resource(%{name: "root"})
 {:ok, accounts} = Resources.create_resource(%{name: "accounts", parent_id: root.id})
 
-# accounts
-alias Fhub.Accounts
-
-{:ok, user} =
-  Accounts.create_user(%{
-    resource: %{parent_id: accounts.id},
-    name: "florius",
-    email: "vadim.tsvetkov80@gmail.com"
-  })
-
 # permissions
 alias Fhub.AccessControl
 
@@ -35,4 +25,25 @@ alias Fhub.AccessControl
     resource_id: root.id
   })
 
-{:ok, root_permission} = AccessControl.add_actors(root_permission, [root])
+{:ok, user_permission} =
+  AccessControl.create_permission(%{
+    can: [:read],
+    resource_id: root.id
+  })
+
+{:ok, _} = AccessControl.add_actors(root_permission, [root])
+
+# accounts
+alias Fhub.Accounts
+
+{:ok, user} =
+  Accounts.create_user(
+    %{
+      resource: %{parent_id: accounts.id},
+      name: "florius",
+      email: "vadim.tsvetkov80@gmail.com"
+    },
+    root
+  )
+
+{:ok, _} = AccessControl.add_actors(user_permission, [user])

@@ -1,18 +1,15 @@
 defmodule Remote do
   @moduledoc """
-  Documentation for `Remote`.
+  Module for runnig custom remote functions
   """
+  @callback check(bitstring()) :: {:ok, bitstring()} | {:error, atom()}
 
-  @doc """
-  Hello world.
+  @callback run(bitstring(), list()) :: any()
 
-  ## Examples
-
-      iex> Remote.hello()
-      :world
-
-  """
-  def hello do
-    :world
+  @spec run(module(), bitstring(), list()) :: any
+  def run(module, code, opts) do
+    with {:ok, code} <- module.check(code) do
+      module.run(code, opts)
+    end
   end
 end

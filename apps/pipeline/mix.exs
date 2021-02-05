@@ -1,9 +1,9 @@
-defmodule Remote.MixProject do
+defmodule Pipeline.MixProject do
   use Mix.Project
 
   def project do
     [
-      app: :remote,
+      app: :pipeline,
       version: "0.1.0",
       build_path: "../../_build",
       config_path: "../../config/config.exs",
@@ -18,8 +18,7 @@ defmodule Remote.MixProject do
   # Run "mix help compile.app" to learn about applications.
   def application do
     [
-      extra_applications: [:logger],
-      mod: {Remote.Application, []}
+      extra_applications: [:logger]
     ]
   end
 

@@ -1,24 +1,19 @@
-defmodule Pipeline.Remote do
+defmodule Pipeline.Remote.Elixir.Compile do
   @behaviour Pipeline
 
-  @type state :: %{code: bitstring, fun: function, opts: list, result: any}
-  @type step :: :check | :compile | :execute
+  @type state :: %{code: bitstring, compiled_function: function}
+  @type step :: :check | :compile
 
   @impl Pipeline
-  @spec run(state) :: {:ok, any} | {:error, Pipeline.Error.t}
-  def run(%{fun: _f, opts: _opts} = state) do
-    with {:ok, s} <- execute(state) do
-      {:ok, s}
-    else
-      {:error, step, state, error} ->
-        Pipeline.handle_error(__MODULE__, step, state, error)
-    end
+  @spec run(state) :: {:ok, function} | {:error, Pipeline.Error.t}
+
+  def run(%{compiled_function: f}) when is_function(f) do
+    {:ok, f}
   end
 
-  def run(%{code: _code} = state) do
+  def run(%{code: code} = state) when is_bitstring(code) do
     with {:ok, state} <- check(state),
-         {:ok, state} <- compile(state),
-         {:ok, state} <- execute(state) do
+         {:ok, state} <- compile(state) do
       {:ok, state}
     else
       {:error, step, state, error} ->
@@ -28,7 +23,7 @@ defmodule Pipeline.Remote do
 
   defp check(%{code: code} = state) do
     with {:ok, ast} <- Code.string_to_quoted(code),
-         {:ok, _} <- fun?(ast) do
+         {:ok, _} <- check_is_fun(ast) do
       {:ok, state}
     else
       {:error, err} -> {:error, :check, state, err}
@@ -38,23 +33,14 @@ defmodule Pipeline.Remote do
   defp compile(%{code: code} = state) do
     try do
       {fun, _} = Code.eval_string(code)
-      {:ok, Map.put(state, :fun, fun)}
+      {:ok, Map.put(state, :compiled_function, fun)}
     rescue
       e ->
         {:error, :compile, state, e}
     end
   end
 
-  defp execute(%{fun: f, opts: opts} = state) do
-    try do
-      {:ok, Map.put(state, :result, f.(opts))}
-    rescue
-      e ->
-        {:error, :execute, state, e}
-    end
-  end
-
-  defp fun?(ast) do
+  defp check_is_fun(ast) do
     r =
       Macro.prewalk(ast, false, fn
         {:fn, _, _} = t, false -> {t, true}

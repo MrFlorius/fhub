@@ -10,5 +10,7 @@ defmodule Fhub.Repo.Migrations.CreatePermissions do
 
       timestamps()
     end
+
+    create index(:permissions, [:resource_id])
   end
 end

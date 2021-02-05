@@ -2,18 +2,14 @@ defmodule Fhub.Functions.Calls do
   use Ecto.Schema
   import Ecto.Changeset
 
-  @primary_key {:id, :binary_id, autogenerate: false}
+  @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
 
-  schema "function_calls" do
-    belongs_to :version, Fhub.Functions.Versions,
-      primary_key: true,
-      foreign_key: :id,
-      define_field: false,
-      on_replace: :mark_as_invalid
+  schema "functions_calls" do
+    belongs_to :version, Fhub.Functions.Versions, on_replace: :mark_as_invalid
 
     field :opts, :map
-    field :return
+    field :result, EctoTerm
 
     timestamps()
   end

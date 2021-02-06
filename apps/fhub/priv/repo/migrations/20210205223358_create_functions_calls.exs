@@ -8,11 +8,11 @@ defmodule Fhub.Repo.Migrations.CreateFunctionsCalls do
       add :opts, :map
       add :result, :binary
 
-      add :function_version_id, references(:functions_versions, on_delete: :delete_all, type: :binary_id)
+      add :version_id, references(:functions_versions, on_delete: :delete_all, type: :binary_id)
 
       timestamps()
     end
 
-    create index(:functions_calls, [:function_version_id])
+    create index(:functions_calls, [:version_id])
   end
 end

@@ -1,11 +1,11 @@
 defmodule Pipeline.Remote.Elixir.Execute do
   @behaviour Pipeline
 
-  @type state :: %{compiled_function: function, opts: map, result: any}
+  @type state :: %{compiled_function: function, opts: map, result: any} | %{compiled_function: function, opts: map}
   @type step :: :execute
 
   @impl Pipeline
-  @spec run(state) :: {:ok, any} | {:error, Pipeline.Error.t}
+  @spec run(state) :: {:ok, state} | {:error, Pipeline.Error.t}
   def run(%{compiled_function: _f, opts: _opts} = state) do
     with {:ok, s} <- execute(state) do
       {:ok, s}

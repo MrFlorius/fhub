@@ -12,13 +12,15 @@ defmodule Fhub.Functions.Versions do
     field :code, :string
     field :compiled_function, EctoTerm
 
+    has_many :calls, Fhub.Functions.Calls, foreign_key: :version_id
+
     timestamps()
   end
 
   @doc false
   def changeset(user, attrs) do
     user
-    |> cast(attrs, [:version, :code, :compiled_function, :function_id])
+    |> cast(attrs, [:version, :code, :compiled_function])
     |> validate_required([:version, :code])
   end
 end

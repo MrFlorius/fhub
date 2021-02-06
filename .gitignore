@@ -3,7 +3,8 @@
 *graf.html
 *xref_graph.dot
 .vscode
-.DS_store
+.DS_Store
+
 /_build/
 
 # If you run "mix test --cover", coverage assets end up here.

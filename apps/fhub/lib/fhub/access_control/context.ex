@@ -100,7 +100,7 @@ defmodule Fhub.AccessControl.Context do
       single: single(opts, alias),
       plural: plural(opts, alias),
       resource_field: Keyword.get(opts, :resource_field, :resource),
-      resource_parent: Keyword.fetch!(opts, :resource_parent)
+      resource_parent: Keyword.get(opts, :resource_parent, nil)
     ]
   end
 

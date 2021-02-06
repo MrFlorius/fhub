@@ -16,13 +16,15 @@ defmodule Fhub.Functions.Function do
 
     field :name, :string
 
+    has_many :versions, Fhub.Functions.Versions
+
     timestamps()
   end
 
   @doc false
   def changeset(user, attrs) do
     user
-    |> cast(attrs, [:email, :name])
-    |> validate_required([:email, :name])
+    |> cast(attrs, [:name])
+    |> validate_required([:name])
   end
 end

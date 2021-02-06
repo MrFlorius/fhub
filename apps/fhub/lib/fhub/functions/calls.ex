@@ -17,7 +17,8 @@ defmodule Fhub.Functions.Calls do
   @doc false
   def changeset(user, attrs) do
     user
-    |> cast(attrs, [:email, :name])
-    |> validate_required([:email, :name])
+    |> cast(attrs, [:opts, :result, :version_id])
+    |> cast_assoc(:version, with: &Fhub.Functions.Versions.changeset/2)
+    |> validate_required([:opts])
   end
 end

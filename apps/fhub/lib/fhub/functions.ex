@@ -1,15 +1,26 @@
 defmodule Fhub.Functions do
-  # alias Fhub.Repo
   alias Fhub.Functions.Function
   alias Fhub.Functions.Version
   alias Fhub.Functions.Call
   alias Fhub.Resources
+  alias Fhub.AccessControl.Transactions
 
-  # import Ecto.Query
+  import Ecto.Query
 
   use Fhub.AccessControl.Context, for: Function, resource_parent: "functions"
   use Fhub.AccessControl.Context, for: Version
   use Fhub.AccessControl.Context, for: Call
+
+  def list_versions(%Function{} = f, actor) do
+    q =
+      from v in Version,
+        join: r in Resources.Resource,
+        on: v.id == r.id,
+        where: r.parent_id == ^f.id,
+        select: v
+
+    Transactions.operation_filter(fn repo, _ -> {:ok, repo.all(q)} end, actor, :read)
+  end
 
   def change_version(v, attrs \\ %{}) do
     c = super(v, attrs)
@@ -17,13 +28,29 @@ defmodule Fhub.Functions do
     if c.valid?, do: compile_version(c), else: c
   end
 
-  # def list_calls(%Version{} = v, _actor) do
-  #   Repo.all(from c in Call, where: c.function_version_id == ^v.id)
-  # end
+  def list_calls(%Version{} = v, actor) do
+    q =
+      from c in Call,
+        join: r in Resources.Resource,
+        on: c.id == r.id,
+        where: r.parent_id == ^v.id,
+        select: c
 
-  # def list_calls(%Function{} = f, _actor) do
-  #   Repo.all(from c in Call, join: v in Version, on: c.function_version_id == v.id, where: v.function_id == ^f.id, select: c)
-  # end
+    Transactions.operation_filter(fn repo, _ -> {:ok, repo.all(q)} end, actor, :read)
+  end
+
+  def list_calls(%Function{} = f, actor) do
+    q =
+      from c in Call,
+        join: r1 in Resources.Resource,
+        on: c.id == r1.id,
+        join: r2 in Resources.Resource,
+        on: r2.id == r1.parent_id,
+        where: r2.parent_id == ^f.id,
+        select: c
+
+    Transactions.operation_filter(fn repo, _ -> {:ok, repo.all(q)} end, actor, :read)
+  end
 
   def change_call_create(c, attrs \\ %{}) do
     c = super(c, attrs)

@@ -1,8 +1,8 @@
 defmodule Fhub.Functions do
+  alias Fhub.Resources
   alias Fhub.Functions.Function
   alias Fhub.Functions.Version
   alias Fhub.Functions.Call
-  alias Fhub.Resources
   alias Fhub.AccessControl.Transactions
 
   import Ecto.Query

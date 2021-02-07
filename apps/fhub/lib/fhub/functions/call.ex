@@ -1,4 +1,4 @@
-defmodule Fhub.Functions.Function do
+defmodule Fhub.Functions.Call do
   use Ecto.Schema
   import Ecto.Changeset
 
@@ -6,17 +6,16 @@ defmodule Fhub.Functions.Function do
   @foreign_key_type :binary_id
 
   @derive [Fhub.Resources.ResourceProtocol, Fhub.Resources.TreeProtocol]
-
-  schema "functions" do
+  
+  schema "functions_calls" do
     belongs_to :resource, Fhub.Resources.Resource,
-      primary_key: true,
-      foreign_key: :id,
-      define_field: false,
-      on_replace: :mark_as_invalid
+    primary_key: true,
+    foreign_key: :id,
+    define_field: false,
+    on_replace: :mark_as_invalid
 
-    field :name, :string
-
-    has_many :versions, Fhub.Functions.Version
+    field :opts, :map
+    field :result, EctoTerm
 
     timestamps()
   end
@@ -24,7 +23,7 @@ defmodule Fhub.Functions.Function do
   @doc false
   def changeset(user, attrs) do
     user
-    |> cast(attrs, [:name])
-    |> validate_required([:name])
+    |> cast(attrs, [:opts, :result])
+    |> validate_required([:opts])
   end
 end

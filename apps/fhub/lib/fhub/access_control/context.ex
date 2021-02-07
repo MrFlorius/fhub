@@ -31,15 +31,15 @@ defmodule Fhub.AccessControl.Context do
         end
       end
 
-      def unquote(:"create_#{s}")(attrs \\ %{}, actor) do
+      def unquote(:"create_#{s}")(attrs \\ %{}, actor, parent \\ nil) do
         Fhub.AccessControl.Transactions.operation(
           fn repo, _ ->
-            s = struct(unquote(m))
+            p = if parent, do: parent, else: Fhub.Resources.get_resource_by(%{name: unquote(n)})
 
-            s
-            |> unquote(:"change_#{s}")(attrs)
-            |> Ecto.Changeset.change(%{unquote(r) => unquote(:"build_resource_for_#{s}")(s, actor)})
+            struct(unquote(m))
+            |> Ecto.Changeset.change(%{unquote(r) => unquote(:"build_resource_for_#{s}")(p)})
             |> Ecto.Changeset.cast_assoc(unquote(r), with: &Fhub.Resources.Resource.changeset/2)
+            |> unquote(:"change_#{s}")(attrs)
             |> repo.insert()
           end,
           actor,
@@ -67,13 +67,21 @@ defmodule Fhub.AccessControl.Context do
         )
       end
 
-      def unquote(:"change_#{s}")(s = %unquote(m){}, attrs \\ %{}) do
+      def unquote(:"change_#{s}")(s, attrs \\ %{}) do
         unquote(m).changeset(s, attrs)
       end
 
+      def unquote(:"change_#{s}_create")(s, attrs \\ %{}) do
+        unquote(:"change_#{s}")(s, attrs)
+      end
+
+      def unquote(:"change_#{s}_update")(s, attrs \\ %{}) do
+        unquote(:"change_#{s}")(s, attrs)
+      end
+
       # seems a bit clunky
-      def unquote(:"build_resource_for_#{s}")(s = %unquote(m){}, _actor) do
-        r = Fhub.Resources.get_resource_by(%{name: unquote(n)})
+      def unquote(:"build_resource_for_#{s}")(resource) do
+        r = Fhub.Resources.ResourceProtocol.resource(resource)
         %Fhub.Resources.Resource{parent_id: r.id}
       end
 
@@ -83,11 +91,16 @@ defmodule Fhub.AccessControl.Context do
         {unquote(:"get_#{s}!"),   2},
         {unquote(:"create_#{s}"), 1},
         {unquote(:"create_#{s}"), 2},
+        {unquote(:"create_#{s}"), 3},
         {unquote(:"update_#{s}"), 3},
         {unquote(:"delete_#{s}"), 2},
         {unquote(:"change_#{s}"), 1},
         {unquote(:"change_#{s}"), 2},
-        {unquote(:"build_resource_for_#{s}"), 2}
+        {unquote(:"change_#{s}_create"), 1},
+        {unquote(:"change_#{s}_create"), 2},
+        {unquote(:"change_#{s}_update"), 1},
+        {unquote(:"change_#{s}_update"), 2},
+        {unquote(:"build_resource_for_#{s}"), 1}
       ]
     end
   end

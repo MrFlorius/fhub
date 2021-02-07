@@ -40,6 +40,9 @@ defmodule Fhub.Resources do
     Repo.get_by(Resource, attrs)
   end
 
+  def root() do
+    get_resource_by(%{name: "root"})
+  end
 
   @doc """
   Creates a resource.

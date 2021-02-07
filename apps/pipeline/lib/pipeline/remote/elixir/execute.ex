@@ -5,7 +5,6 @@ defmodule Pipeline.Remote.Elixir.Execute do
   @type step :: :execute
 
   @impl Pipeline
-  @spec run(state) :: {:ok, state} | {:error, Pipeline.Error.t}
   def run(%{compiled_function: _f, opts: _opts} = state) do
     with {:ok, s} <- execute(state) do
       {:ok, s}

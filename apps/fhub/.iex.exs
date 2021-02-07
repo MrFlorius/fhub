@@ -8,4 +8,6 @@ alias Fhub.AccessControl.Permission
 alias Fhub.Accounts.User
 alias Fhub.Resources.Resource
 
+alias Fhub.Functions
+
 root = hd(Resources.list_resources())

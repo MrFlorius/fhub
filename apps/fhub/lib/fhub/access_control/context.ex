@@ -39,7 +39,7 @@ defmodule Fhub.AccessControl.Context do
             struct(unquote(m))
             |> Ecto.Changeset.change(%{unquote(r) => unquote(:"build_resource_for_#{s}")(p)})
             |> Ecto.Changeset.cast_assoc(unquote(r), with: &Fhub.Resources.Resource.changeset/2)
-            |> unquote(:"change_#{s}")(attrs)
+            |> unquote(:"change_#{s}_create")(attrs)
             |> repo.insert()
           end,
           actor,
@@ -51,7 +51,7 @@ defmodule Fhub.AccessControl.Context do
         Fhub.AccessControl.Transactions.operation(
           fn repo, _ ->
             s
-            |> unquote(:"change_#{s}")(attrs)
+            |> unquote(:"change_#{s}_update")(attrs)
             |> repo.update()
           end,
           actor,

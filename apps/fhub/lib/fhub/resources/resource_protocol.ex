@@ -5,4 +5,6 @@ defprotocol Fhub.Resources.ResourceProtocol do
   """
   @spec resource(any) :: Fhub.Resources.Resource.t()
   def resource(term, repo \\ Fhub.Repo)
+
+  def preload(term, repo \\ Fhub.Repo)
 end

@@ -1,13 +1,11 @@
 alias Fhub.Repo
 
 alias Fhub.AccessControl
-alias Fhub.Accounts
 alias Fhub.Resources
-
-alias Fhub.AccessControl.Permission
-alias Fhub.Accounts.User
-alias Fhub.Resources.Resource
-
+alias Fhub.Apps
+alias Fhub.Accounts
+alias Fhub.Documents
+alias Fhub.Caches
 alias Fhub.Functions
 
 root = hd(Resources.list_resources())

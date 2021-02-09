@@ -1,4 +1,4 @@
-defmodule Fhub.Cache.Cache do
+defmodule Fhub.Caches.Cache do
     use Ecto.Schema
     import Ecto.Changeset
 

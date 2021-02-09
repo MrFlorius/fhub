@@ -7,7 +7,7 @@ defmodule Fhub.Functions do
 
   import Ecto.Query
 
-  use Fhub.AccessControl.Context, for: Function, resource_parent: "functions"
+  use Fhub.AccessControl.Context, for: Function
   use Fhub.AccessControl.Context, for: Version
   use Fhub.AccessControl.Context, for: Call
 
@@ -79,7 +79,10 @@ defmodule Fhub.Functions do
           {:error, e} -> e
         end
 
+      IO.inspect(result)
+
       Call.changeset(c, %{result: result})
+      |> IO.inspect()
     else
       x ->
         IO.inspect(x)

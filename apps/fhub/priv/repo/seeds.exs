@@ -15,7 +15,6 @@ alias Fhub.Resources
 
 {:ok, root} = Resources.create_resource(%{name: "root"})
 {:ok, accounts} = Resources.create_resource(%{name: "accounts", parent_id: root.id})
-{:ok, functions} = Resources.create_resource(%{name: "functions", parent_id: root.id})
 {:ok, apps} = Resources.create_resource(%{name: "apps", parent_id: root.id})
 
 # permissions

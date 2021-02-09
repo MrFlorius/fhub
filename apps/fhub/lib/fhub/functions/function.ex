@@ -16,8 +16,6 @@ defmodule Fhub.Functions.Function do
 
     field :name, :string
 
-    has_many :versions, Fhub.Functions.Version
-
     timestamps()
   end
 

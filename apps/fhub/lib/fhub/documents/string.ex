@@ -1,4 +1,4 @@
-defmodule Fhub.Document.String do
+defmodule Fhub.Documents.String do
   use Ecto.Schema
   import Ecto.Changeset
 

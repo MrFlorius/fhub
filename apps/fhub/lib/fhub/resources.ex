@@ -40,6 +40,30 @@ defmodule Fhub.Resources do
     Repo.get_by(Resource, attrs)
   end
 
+  def get_resource_by_path(path) do
+    Repo.transaction(fn repo ->
+      do_get_resource_by_path(repo.all(Resource.roots()), path, repo)
+    end)
+  end
+
+  defp do_get_resource_by_path(rs, [p], _rp) do
+    rs
+    |> Enum.filter(fn %{name: n} -> n == p end)
+    |> Enum.at(0)
+  end
+
+  defp do_get_resource_by_path(rs, [p | tail] = path , rp) when length(path) > 0 do
+    rs
+    |> Enum.filter(fn %{name: n} -> n == p end)
+    |> Enum.map(fn r ->
+      r
+      |> Resource.children()
+      |> rp.all()
+      |> do_get_resource_by_path(tail, rp)
+    end)
+    |> Enum.at(0)
+  end
+
   def root() do
     get_resource_by(%{name: "root"})
   end

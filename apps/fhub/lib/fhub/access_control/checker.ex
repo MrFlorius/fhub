@@ -3,7 +3,7 @@ defmodule Fhub.AccessControl.Checker do
   alias Fhub.Resources.Resource
   alias Fhub.AccessControl.Permission
   alias Fhub.Resources.ResourceProtocol
-  alias Fhub.Resources.TreeProtocol
+  alias Fhub.Resources.Tree
 
   def permit(resource, actor, action, repo \\ Fhub.Repo) do
     if check?(resource, actor, action, repo) do
@@ -27,7 +27,7 @@ defmodule Fhub.AccessControl.Checker do
     r = %{permissions: rp} = repo.preload(resource, :permissions)
 
     case do_check_cartesian(rp, ap, action) do
-      [] -> do_check?(TreeProtocol.parent(r, repo), a, action, repo)
+      [] -> do_check?(Tree.parent(r, repo), a, action, repo)
       x -> x
     end
   end

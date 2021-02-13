@@ -71,7 +71,7 @@ defmodule Fhub.Functions do
 
   defp execute_call(%Ecto.Changeset{} = c) do
     with %{opts: opts} = call <- Ecto.Changeset.apply_changes(c),
-         parent <- Resources.TreeProtocol.parent(call),
+         parent <- Resources.Tree.parent(call),
          {:ok, %{compiled_function: f}} <- get_version(parent.id, Resources.root()) do
       result =
         case Pipeline.Remote.Elixir.Execute.run(%{compiled_function: f, opts: opts}) do

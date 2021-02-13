@@ -9,6 +9,6 @@ alias Fhub.Caches
 alias Fhub.Functions
 
 alias Fhub.Resources.ResourceProtocol
-alias Fhub.Resources.TreeProtocol
+alias Fhub.Resources.Tree
 
 root = hd(Resources.list_resources())

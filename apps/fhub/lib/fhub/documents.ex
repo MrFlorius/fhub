@@ -8,4 +8,10 @@ defmodule Fhub.Documents do
   use Fhub.AccessControl.Context, for: Decimal
   use Fhub.AccessControl.Context, for: Json
   use Fhub.AccessControl.Context, for: String
+
+  # def list_children(r) do
+  #   r
+  #   |> Fhub.Resources.Tree.children()
+  #   |> Enum.map(&Fhub.Resources.ResourceProtocol.convert/1)
+  # end
 end

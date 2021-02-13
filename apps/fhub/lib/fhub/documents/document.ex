@@ -5,7 +5,7 @@ defmodule Fhub.Documents.Document do
   @primary_key {:id, :binary_id, autogenerate: false}
   @foreign_key_type :binary_id
 
-  @derive [Fhub.Resources.ResourceProtocol, Fhub.Resources.TreeProtocol]
+  @derive [Fhub.Resources.ResourceProtocol]
 
   schema "documents" do
     belongs_to :resource, Fhub.Resources.Resource,

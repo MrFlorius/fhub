@@ -18,7 +18,7 @@ defmodule Fhub.Resources.Tree do
     if include, do: b ++ [resource], else: b
   end
 
-  def descendants(r, include, repo \\ Fhub.Repo) do
+  def descendants(r, include \\ false, repo \\ Fhub.Repo) do
     resource = ResourceProtocol.resource(r)
 
     b =

@@ -49,9 +49,10 @@ defmodule Fhub.AccessControl.Context do
         Fhub.AccessControl.Transactions.operation(
           fn repo, _ ->
             struct(unquote(m))
-            |> Ecto.Changeset.change(%{unquote(r) => unquote(:"build_resource_for_#{s}")(parent)})
-            |> Ecto.Changeset.cast_assoc(unquote(r), with: &Fhub.Resources.Resource.changeset/2)
             |> unquote(:"change_#{s}_create")(attrs)
+            |> fn c ->
+              Ecto.Changeset.put_assoc(c, unquote(r), unquote(:"build_resource_for_#{s}")(parent, actor, c))
+            end.()
             |> repo.insert()
           end,
           actor,
@@ -92,7 +93,7 @@ defmodule Fhub.AccessControl.Context do
       end
 
       # seems a bit clunky
-      def unquote(:"build_resource_for_#{s}")(resource) do
+      def unquote(:"build_resource_for_#{s}")(resource, _actor, _changeset) do
         r = Fhub.Resources.ResourceProtocol.resource(resource)
         %Fhub.Resources.Resource{parent_id: r.id}
       end
@@ -113,7 +114,7 @@ defmodule Fhub.AccessControl.Context do
           {unquote(:"change_#{s}_create"), 2},
           {unquote(:"change_#{s}_update"), 1},
           {unquote(:"change_#{s}_update"), 2},
-          {unquote(:"build_resource_for_#{s}"), 1}
+          {unquote(:"build_resource_for_#{s}"), 3}
         ]
       else
         defoverridable [
@@ -129,7 +130,7 @@ defmodule Fhub.AccessControl.Context do
           {unquote(:"change_#{s}_create"), 2},
           {unquote(:"change_#{s}_update"), 1},
           {unquote(:"change_#{s}_update"), 2},
-          {unquote(:"build_resource_for_#{s}"), 1}
+          {unquote(:"build_resource_for_#{s}"), 3}
         ]
       end
     end

@@ -165,7 +165,7 @@ defmodule Fhub.AccessControlTest do
       end
 
       assert TestContext1.__info__(:functions) == [
-        {:build_resource_for_resource, 1},
+        {:build_resource_for_resource, 3},
         {:change_resource, 1},
         {:change_resource, 2},
         {:change_resource_create, 1},
@@ -194,7 +194,7 @@ defmodule Fhub.AccessControlTest do
       end
 
       assert TestContext2.__info__(:functions) == [
-        {:build_resource_for_some_resource, 1},
+        {:build_resource_for_some_resource, 3},
         {:change_some_resource, 1},
         {:change_some_resource, 2},
         {:change_some_resource_create, 1},
@@ -244,11 +244,11 @@ defmodule Fhub.AccessControlTest do
       resource
     end
 
-    test "build_resource_for_resource/1 returns proper resource" do
+    test "build_resource_for_resource/3 returns proper resource" do
       root = root_fixture()
       root_id = root.id
 
-      assert match?(%Resources.Resource{parent_id: ^root_id}, TestContext.build_resource_for_resource(root))
+      assert match?(%Resources.Resource{parent_id: ^root_id}, TestContext.build_resource_for_resource(root, nil, nil))
     end
 
     test "change_resource/2 returns changeset" do

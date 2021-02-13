@@ -31,13 +31,25 @@ defmodule Fhub.AccessControl.Context do
         end
       end
 
-      def unquote(:"create_#{s}")(attrs \\ %{}, actor, parent \\ nil) do
+      if unquote(n) != nil do
+        def unquote(:"create_#{s}")(actor) do
+          unquote(:"create_#{s}")(%{}, actor, Fhub.Resources.get_resource_by(%{name: unquote(n)}))
+        end
+
+        def unquote(:"create_#{s}")(attrs, actor) do
+          unquote(:"create_#{s}")(
+            attrs,
+            actor,
+            Fhub.Resources.get_resource_by(%{name: unquote(n)})
+          )
+        end
+      end
+
+      def unquote(:"create_#{s}")(attrs, actor, parent) do
         Fhub.AccessControl.Transactions.operation(
           fn repo, _ ->
-            p = if parent, do: parent, else: Fhub.Resources.get_resource_by(%{name: unquote(n)})
-
             struct(unquote(m))
-            |> Ecto.Changeset.change(%{unquote(r) => unquote(:"build_resource_for_#{s}")(p)})
+            |> Ecto.Changeset.change(%{unquote(r) => unquote(:"build_resource_for_#{s}")(parent)})
             |> Ecto.Changeset.cast_assoc(unquote(r), with: &Fhub.Resources.Resource.changeset/2)
             |> unquote(:"change_#{s}_create")(attrs)
             |> repo.insert()
@@ -85,23 +97,41 @@ defmodule Fhub.AccessControl.Context do
         %Fhub.Resources.Resource{parent_id: r.id}
       end
 
-      defoverridable [
-        {unquote(:"list_#{p}"),   1},
-        {unquote(:"get_#{s}"),    2},
-        {unquote(:"get_#{s}!"),   2},
-        {unquote(:"create_#{s}"), 1},
-        {unquote(:"create_#{s}"), 2},
-        {unquote(:"create_#{s}"), 3},
-        {unquote(:"update_#{s}"), 3},
-        {unquote(:"delete_#{s}"), 2},
-        {unquote(:"change_#{s}"), 1},
-        {unquote(:"change_#{s}"), 2},
-        {unquote(:"change_#{s}_create"), 1},
-        {unquote(:"change_#{s}_create"), 2},
-        {unquote(:"change_#{s}_update"), 1},
-        {unquote(:"change_#{s}_update"), 2},
-        {unquote(:"build_resource_for_#{s}"), 1}
-      ]
+      if unquote(n) != nil do
+        defoverridable [
+          {unquote(:"list_#{p}"), 1},
+          {unquote(:"get_#{s}"), 2},
+          {unquote(:"get_#{s}!"), 2},
+          {unquote(:"create_#{s}"), 1},
+          {unquote(:"create_#{s}"), 2},
+          {unquote(:"create_#{s}"), 3},
+          {unquote(:"update_#{s}"), 3},
+          {unquote(:"delete_#{s}"), 2},
+          {unquote(:"change_#{s}"), 1},
+          {unquote(:"change_#{s}"), 2},
+          {unquote(:"change_#{s}_create"), 1},
+          {unquote(:"change_#{s}_create"), 2},
+          {unquote(:"change_#{s}_update"), 1},
+          {unquote(:"change_#{s}_update"), 2},
+          {unquote(:"build_resource_for_#{s}"), 1}
+        ]
+      else
+        defoverridable [
+          {unquote(:"list_#{p}"), 1},
+          {unquote(:"get_#{s}"), 2},
+          {unquote(:"get_#{s}!"), 2},
+          {unquote(:"create_#{s}"), 3},
+          {unquote(:"update_#{s}"), 3},
+          {unquote(:"delete_#{s}"), 2},
+          {unquote(:"change_#{s}"), 1},
+          {unquote(:"change_#{s}"), 2},
+          {unquote(:"change_#{s}_create"), 1},
+          {unquote(:"change_#{s}_create"), 2},
+          {unquote(:"change_#{s}_update"), 1},
+          {unquote(:"change_#{s}_update"), 2},
+          {unquote(:"build_resource_for_#{s}"), 1}
+        ]
+      end
     end
   end
 

@@ -7,8 +7,9 @@ defmodule Fhub.Apps do
 
   import Ecto.Query
 
-  use Fhub.AccessControl.Context, for: App, resource_parent: "apps"
+  use Fhub.AccessControl.Context, for: App
 
+  # TODO: Enforce unique Apps names
   def list_functions(%App{} = app, actor) do
     q =
       from f in Function,

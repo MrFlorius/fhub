@@ -17,10 +17,10 @@ defmodule Fhub.Resources.Resource do
     timestamps()
   end
 
-  @doc false
   def changeset(resource, attrs) do
     resource
     |> cast(attrs, [:name, :parent_id])
     |> cast_assoc(:parent, with: &changeset/2)
+    |> unique_constraint(:name, name: :unique_children_index)
   end
 end

@@ -21,8 +21,8 @@ defmodule Fhub.Documents.String do
   end
 
   @doc false
-  def changeset(user, attrs) do
-    user
+  def changeset(string, attrs) do
+    string
     |> cast(attrs, [:key, :value])
     |> validate_required([:key, :value])
   end

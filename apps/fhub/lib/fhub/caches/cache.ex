@@ -20,8 +20,8 @@ defmodule Fhub.Caches.Cache do
     end
 
     @doc false
-    def changeset(user, attrs) do
-      user
+    def changeset(cache, attrs) do
+      cache
       |> cast(attrs, [:name])
       |> validate_required([:name])
     end

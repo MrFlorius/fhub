@@ -21,8 +21,8 @@ defmodule Fhub.Documents.Json do
   end
 
   @doc false
-  def changeset(user, attrs) do
-    user
+  def changeset(json, attrs) do
+    json
     |> cast(attrs, [:key, :value])
     |> validate_required([:key, :value])
   end

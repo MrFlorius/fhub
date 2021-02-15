@@ -20,8 +20,8 @@ defmodule Fhub.Functions.Function do
   end
 
   @doc false
-  def changeset(user, attrs) do
-    user
+  def changeset(function, attrs) do
+    function
     |> cast(attrs, [:name])
     |> validate_required([:name])
   end

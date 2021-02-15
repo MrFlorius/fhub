@@ -21,8 +21,8 @@ defmodule Fhub.Documents.Decimal do
   end
 
   @doc false
-  def changeset(user, attrs) do
-    user
+  def changeset(decimal, attrs) do
+    decimal
     |> cast(attrs, [:key, :value])
     |> validate_required([:key, :value])
   end

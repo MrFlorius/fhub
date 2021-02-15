@@ -20,8 +20,8 @@ defmodule Fhub.Documents.Document do
   end
 
   @doc false
-  def changeset(user, attrs) do
-    user
+  def changeset(document, attrs) do
+    document
     |> cast(attrs, [:key])
     |> validate_required([:key])
   end

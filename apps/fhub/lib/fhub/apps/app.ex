@@ -21,8 +21,8 @@ defmodule Fhub.Apps.App do
   end
 
   @doc false
-  def changeset(user, attrs) do
-    user
+  def changeset(app, attrs) do
+    app
     |> cast(attrs, [:name, :active])
     |> validate_required([:name])
   end

@@ -22,8 +22,8 @@ defmodule Fhub.Functions.Version do
   end
 
   @doc false
-  def changeset(user, attrs) do
-    user
+  def changeset(version, attrs) do
+    version
     |> cast(attrs, [:version, :code, :compiled_function])
     |> validate_required([:version, :code])
   end

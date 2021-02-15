@@ -21,8 +21,8 @@ defmodule Fhub.Functions.Call do
   end
 
   @doc false
-  def changeset(user, attrs) do
-    user
+  def changeset(call, attrs) do
+    call
     |> cast(attrs, [:opts, :result])
     |> validate_required([:opts])
   end

@@ -12,6 +12,6 @@ defmodule Fhub.Repo.Migrations.CreateResources do
       timestamps()
     end
 
-    create unique_index(:resources, [:parent_id, :name], name: :unique_children_namee_index)
+    create unique_index(:resources, [:parent_id, :name], name: :unique_children_index)
   end
 end

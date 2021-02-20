@@ -14,7 +14,7 @@ defmodule Fhub.Documents.String do
       define_field: false,
       on_replace: :mark_as_invalid
 
-    field :key, :string
+    field :name, :string
     field :value, :string
 
     timestamps()
@@ -23,7 +23,7 @@ defmodule Fhub.Documents.String do
   @doc false
   def changeset(string, attrs) do
     string
-    |> cast(attrs, [:key, :value])
-    |> validate_required([:key, :value])
+    |> cast(attrs, [:name, :value])
+    |> validate_required([:name, :value])
   end
 end

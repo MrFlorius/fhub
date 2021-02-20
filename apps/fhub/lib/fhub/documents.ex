@@ -61,4 +61,21 @@ defmodule Fhub.Documents do
     |> super(actor, changeset)
     |> Map.put(:name, name)
   end
+
+  def update_document(s = %Document{}, attrs, actor) do
+    transaction = fn repo, _ ->
+      s
+      |> repo.preload([:resource])
+      |> change_document_update(attrs)
+      |> (fn c ->
+            %{name: name} = Ecto.Changeset.apply_changes(c)
+            %{resource: %{id: id, parent_id: parent_id}} = s
+
+            cast_resource_for_document(c, %{id: id, parent_id: parent_id, name: name})
+          end).()
+      |> repo.update()
+    end
+
+    Fhub.AccessControl.Transactions.operation(transaction, actor, :update)
+  end
 end

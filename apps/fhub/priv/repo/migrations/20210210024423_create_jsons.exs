@@ -5,7 +5,7 @@ defmodule Fhub.Repo.Migrations.CreateJsons do
     create table(:jsons, primary_key: false) do
       add :id, references(:resources, on_delete: :delete_all, type: :binary_id), primary_key: true
 
-      add :key, :string
+      add :name, :string
       add :value, :map
 
       timestamps()

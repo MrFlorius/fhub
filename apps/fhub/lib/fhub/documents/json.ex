@@ -14,7 +14,7 @@ defmodule Fhub.Documents.Json do
       define_field: false,
       on_replace: :mark_as_invalid
 
-    field :key, :string
+    field :name, :string
     field :value, :map
 
     timestamps()
@@ -23,7 +23,7 @@ defmodule Fhub.Documents.Json do
   @doc false
   def changeset(json, attrs) do
     json
-    |> cast(attrs, [:key, :value])
-    |> validate_required([:key, :value])
+    |> cast(attrs, [:name, :value])
+    |> validate_required([:name, :value])
   end
 end

@@ -166,6 +166,7 @@ defmodule Fhub.AccessControlTest do
 
       assert TestContext1.__info__(:functions) == [
         {:build_resource_for_resource, 3},
+        {:cast_resource_for_resource, 2},
         {:change_resource, 1},
         {:change_resource, 2},
         {:change_resource_create, 1},
@@ -195,6 +196,7 @@ defmodule Fhub.AccessControlTest do
 
       assert TestContext2.__info__(:functions) == [
         {:build_resource_for_some_resource, 3},
+        {:cast_resource_for_some_resource, 2},
         {:change_some_resource, 1},
         {:change_some_resource, 2},
         {:change_some_resource_create, 1},
@@ -248,7 +250,7 @@ defmodule Fhub.AccessControlTest do
       root = root_fixture()
       root_id = root.id
 
-      assert match?(%Resources.Resource{parent_id: ^root_id}, TestContext.build_resource_for_resource(root, nil, nil))
+      assert match?(%{parent_id: ^root_id}, TestContext.build_resource_for_resource(root, nil, nil))
     end
 
     test "change_resource/2 returns changeset" do

@@ -2,6 +2,33 @@ defmodule Fhub.AccessControl.Context do
   defmacro __using__(opts) do
     [module: m, single: s, plural: p, resource_field: r, resource_parent: n] = parse_opts(opts)
 
+    common_overridables = [
+      {:"list_#{p}", 1},
+      {:"get_#{s}", 2},
+      {:"get_#{s}!", 2},
+      {:"create_#{s}", 3},
+      {:"update_#{s}", 3},
+      {:"delete_#{s}", 2},
+      {:"change_#{s}", 1},
+      {:"change_#{s}", 2},
+      {:"change_#{s}_create", 1},
+      {:"change_#{s}_create", 2},
+      {:"change_#{s}_update", 1},
+      {:"change_#{s}_update", 2},
+      {:"build_resource_for_#{s}", 3}
+    ]
+
+    overridables =
+      if n != nil do
+        common_overridables ++
+          [
+            {:"create_#{s}", 1},
+            {:"create_#{s}", 2}
+          ]
+      else
+        common_overridables
+      end
+
     quote do
       def unquote(:"list_#{p}")(actor) do
         Fhub.AccessControl.Transactions.operation_filter(
@@ -50,13 +77,12 @@ defmodule Fhub.AccessControl.Context do
           fn repo, _ ->
             struct(unquote(m))
             |> unquote(:"change_#{s}_create")(attrs)
-            |> fn c ->
-              res = unquote(:"build_resource_for_#{s}")(parent, actor, c)
-
-              c
-              |> Ecto.Changeset.cast(%{unquote(r) => res}, [])
-              |> Ecto.Changeset.cast_assoc(unquote(r), with: &Fhub.Resources.Resource.changeset/2)
-            end.()
+            |> (fn c ->
+                  unquote(:"cast_resource_for_#{s}")(
+                    c,
+                    unquote(:"build_resource_for_#{s}")(parent, actor, c)
+                  )
+                end).()
             |> repo.insert()
           end,
           actor,
@@ -102,41 +128,13 @@ defmodule Fhub.AccessControl.Context do
         %{parent_id: r.id}
       end
 
-      if unquote(n) != nil do
-        defoverridable [
-          {unquote(:"list_#{p}"), 1},
-          {unquote(:"get_#{s}"), 2},
-          {unquote(:"get_#{s}!"), 2},
-          {unquote(:"create_#{s}"), 1},
-          {unquote(:"create_#{s}"), 2},
-          {unquote(:"create_#{s}"), 3},
-          {unquote(:"update_#{s}"), 3},
-          {unquote(:"delete_#{s}"), 2},
-          {unquote(:"change_#{s}"), 1},
-          {unquote(:"change_#{s}"), 2},
-          {unquote(:"change_#{s}_create"), 1},
-          {unquote(:"change_#{s}_create"), 2},
-          {unquote(:"change_#{s}_update"), 1},
-          {unquote(:"change_#{s}_update"), 2},
-          {unquote(:"build_resource_for_#{s}"), 3}
-        ]
-      else
-        defoverridable [
-          {unquote(:"list_#{p}"), 1},
-          {unquote(:"get_#{s}"), 2},
-          {unquote(:"get_#{s}!"), 2},
-          {unquote(:"create_#{s}"), 3},
-          {unquote(:"update_#{s}"), 3},
-          {unquote(:"delete_#{s}"), 2},
-          {unquote(:"change_#{s}"), 1},
-          {unquote(:"change_#{s}"), 2},
-          {unquote(:"change_#{s}_create"), 1},
-          {unquote(:"change_#{s}_create"), 2},
-          {unquote(:"change_#{s}_update"), 1},
-          {unquote(:"change_#{s}_update"), 2},
-          {unquote(:"build_resource_for_#{s}"), 3}
-        ]
+      def unquote(:"cast_resource_for_#{s}")(changeset, resource) do
+        changeset
+        |> Ecto.Changeset.cast(%{unquote(r) => resource}, [])
+        |> Ecto.Changeset.cast_assoc(unquote(r), with: &Fhub.Resources.Resource.changeset/2)
       end
+
+      defoverridable(unquote(overridables))
     end
   end
 

@@ -51,7 +51,11 @@ defmodule Fhub.AccessControl.Context do
             struct(unquote(m))
             |> unquote(:"change_#{s}_create")(attrs)
             |> fn c ->
-              Ecto.Changeset.put_assoc(c, unquote(r), unquote(:"build_resource_for_#{s}")(parent, actor, c))
+              res = unquote(:"build_resource_for_#{s}")(parent, actor, c)
+
+              c
+              |> Ecto.Changeset.cast(%{unquote(r) => res}, [])
+              |> Ecto.Changeset.cast_assoc(unquote(r), with: &Fhub.Resources.Resource.changeset/2)
             end.()
             |> repo.insert()
           end,
@@ -95,7 +99,7 @@ defmodule Fhub.AccessControl.Context do
       # seems a bit clunky
       def unquote(:"build_resource_for_#{s}")(resource, _actor, _changeset) do
         r = Fhub.Resources.ResourceProtocol.resource(resource)
-        %Fhub.Resources.Resource{parent_id: r.id}
+        %{parent_id: r.id}
       end
 
       if unquote(n) != nil do

@@ -17,7 +17,7 @@ defmodule Fhub.AccessControl.Permission do
   def access_any, do: :any
   def access_none, do: :none
 
-  @doc false
+
   def changeset(permission, attrs) do
     permission
     |> cast(attrs, [:can, :resource_id])

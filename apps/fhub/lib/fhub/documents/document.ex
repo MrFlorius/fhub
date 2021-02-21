@@ -19,7 +19,7 @@ defmodule Fhub.Documents.Document do
     timestamps()
   end
 
-  @doc false
+
   def changeset(document, attrs) do
     document
     |> cast(attrs, [:name])

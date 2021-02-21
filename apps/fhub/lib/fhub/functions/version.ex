@@ -21,7 +21,7 @@ defmodule Fhub.Functions.Version do
     timestamps()
   end
 
-  @doc false
+
   def changeset(version, attrs) do
     version
     |> cast(attrs, [:version, :code, :compiled_function])

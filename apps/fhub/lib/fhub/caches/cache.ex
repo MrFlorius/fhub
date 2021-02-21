@@ -19,7 +19,7 @@ defmodule Fhub.Caches.Cache do
       timestamps()
     end
 
-    @doc false
+
     def changeset(cache, attrs) do
       cache
       |> cast(attrs, [:name])

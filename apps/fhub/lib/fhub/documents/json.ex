@@ -20,7 +20,7 @@ defmodule Fhub.Documents.Json do
     timestamps()
   end
 
-  @doc false
+
   def changeset(json, attrs) do
     json
     |> cast(attrs, [:name, :value])

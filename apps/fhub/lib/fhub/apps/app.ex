@@ -20,7 +20,7 @@ defmodule Fhub.Apps.App do
     timestamps()
   end
 
-  @doc false
+
   def changeset(app, attrs) do
     app
     |> cast(attrs, [:name, :active])

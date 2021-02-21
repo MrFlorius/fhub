@@ -20,7 +20,7 @@ defmodule Fhub.Documents.Decimal do
     timestamps()
   end
 
-  @doc false
+
   def changeset(decimal, attrs) do
     decimal
     |> cast(attrs, [:name, :value])

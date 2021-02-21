@@ -20,7 +20,7 @@ defmodule Fhub.Functions.Call do
     timestamps()
   end
 
-  @doc false
+
   def changeset(call, attrs) do
     call
     |> cast(attrs, [:opts, :result])

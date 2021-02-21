@@ -19,7 +19,7 @@ defmodule Fhub.Functions.Function do
     timestamps()
   end
 
-  @doc false
+
   def changeset(function, attrs) do
     function
     |> cast(attrs, [:name])

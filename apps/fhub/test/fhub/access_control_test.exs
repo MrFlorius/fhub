@@ -212,6 +212,30 @@ defmodule Fhub.AccessControlTest do
                {:update_some_resource, 3}
              ]
     end
+
+    test "TestContext case #3 got all functions defined" do
+      defmodule TestContext3 do
+        use Elixir.Fhub.AccessControl.Context,
+          for: Elixir.Fhub.Resources.Resource
+      end
+
+      assert TestContext3.__info__(:functions) == [
+               {:build_resource_for_resource, 3},
+               {:cast_resource_for_resource, 2},
+               {:change_resource, 1},
+               {:change_resource, 2},
+               {:change_resource_create, 1},
+               {:change_resource_create, 2},
+               {:change_resource_update, 1},
+               {:change_resource_update, 2},
+               {:create_resource, 3},
+               {:delete_resource, 2},
+               {:get_resource, 2},
+               {:get_resource!, 2},
+               {:list_resources, 1},
+               {:update_resource, 3}
+             ]
+    end
   end
 
   # Not sure about tests' structure

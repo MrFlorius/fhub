@@ -20,7 +20,6 @@ defmodule Fhub.Accounts.User do
     timestamps()
   end
 
-
   def changeset(user, attrs) do
     user
     |> cast(attrs, [:email, :name])

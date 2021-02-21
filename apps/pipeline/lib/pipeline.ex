@@ -19,9 +19,10 @@ defmodule Pipeline do
               error: nil
   end
 
-  @callback run(data :: map) :: {:ok, result :: any} | {:error, Error.t}
+  @callback run(data :: map) :: {:ok, result :: any} | {:error, Error.t()}
 
-  @spec handle_error(pipeline :: atom, step :: atom, state :: map, error :: any) :: {:error, Pipeline.Error.t}
+  @spec handle_error(pipeline :: atom, step :: atom, state :: map, error :: any) ::
+          {:error, Pipeline.Error.t()}
   def handle_error(pipeline, step, state, {:error, error}) do
     handle_error(pipeline, step, state, error)
   end

@@ -1,28 +1,27 @@
 defmodule Fhub.Caches.Cache do
-    use Ecto.Schema
-    import Ecto.Changeset
+  use Ecto.Schema
+  import Ecto.Changeset
 
-    @primary_key {:id, :binary_id, autogenerate: false}
-    @foreign_key_type :binary_id
+  @primary_key {:id, :binary_id, autogenerate: false}
+  @foreign_key_type :binary_id
 
-    # @derive [Fhub.Resources.ResourceProtocol, Fhub.Resources.Tree]
+  # @derive [Fhub.Resources.ResourceProtocol, Fhub.Resources.Tree]
 
-    schema "caches" do
-      belongs_to :resource, Fhub.Resources.Resource,
-        primary_key: true,
-        foreign_key: :id,
-        define_field: false,
-        on_replace: :mark_as_invalid
+  schema "caches" do
+    belongs_to :resource, Fhub.Resources.Resource,
+      primary_key: true,
+      foreign_key: :id,
+      define_field: false,
+      on_replace: :mark_as_invalid
 
-      field :name, :string
+    field :name, :string
 
-      timestamps()
-    end
+    timestamps()
+  end
 
-
-    def changeset(cache, attrs) do
-      cache
-      |> cast(attrs, [:name])
-      |> validate_required([:name])
-    end
+  def changeset(cache, attrs) do
+    cache
+    |> cast(attrs, [:name])
+    |> validate_required([:name])
+  end
 end

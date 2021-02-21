@@ -8,6 +8,5 @@ defprotocol Fhub.Resources.ResourceProtocol do
 
   def preload(term, repo \\ Fhub.Repo)
 
-
   def convert(term, repo \\ Fhub.Repo)
 end

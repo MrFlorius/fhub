@@ -5,7 +5,7 @@ defmodule Pipeline.Remote.Elixir.Compile do
   @type step :: :check | :compile
 
   @impl Pipeline
-  @spec run(state) :: {:ok, state} | {:error, Pipeline.Error.t}
+  @spec run(state) :: {:ok, state} | {:error, Pipeline.Error.t()}
 
   def run(%{compiled_function: f} = state) when is_function(f) do
     {:ok, state}

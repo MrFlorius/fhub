@@ -9,17 +9,16 @@ defmodule Fhub.Functions.Call do
 
   schema "functions_calls" do
     belongs_to :resource, Fhub.Resources.Resource,
-    primary_key: true,
-    foreign_key: :id,
-    define_field: false,
-    on_replace: :mark_as_invalid
+      primary_key: true,
+      foreign_key: :id,
+      define_field: false,
+      on_replace: :mark_as_invalid
 
     field :opts, :map
     field :result, EctoTerm
 
     timestamps()
   end
-
 
   def changeset(call, attrs) do
     call

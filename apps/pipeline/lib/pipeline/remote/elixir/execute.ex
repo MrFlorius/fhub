@@ -1,7 +1,9 @@
 defmodule Pipeline.Remote.Elixir.Execute do
   @behaviour Pipeline
 
-  @type state :: %{compiled_function: function, opts: map, result: any} | %{compiled_function: function, opts: map}
+  @type state ::
+          %{compiled_function: function, opts: map, result: any}
+          | %{compiled_function: function, opts: map}
   @type step :: :execute
 
   @impl Pipeline

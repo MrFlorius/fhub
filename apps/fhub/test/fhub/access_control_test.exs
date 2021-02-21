@@ -165,24 +165,23 @@ defmodule Fhub.AccessControlTest do
       end
 
       assert TestContext1.__info__(:functions) == [
-        {:build_resource_for_resource, 3},
-        {:cast_resource_for_resource, 2},
-        {:change_resource, 1},
-        {:change_resource, 2},
-        {:change_resource_create, 1},
-        {:change_resource_create, 2},
-        {:change_resource_update, 1},
-        {:change_resource_update, 2},
-        {:create_resource, 1},
-        {:create_resource, 2},
-        {:create_resource, 3},
-        {:delete_resource, 2},
-        {:get_resource, 2},
-        {:get_resource!, 2},
-        {:list_resources, 1},
-        {:update_resource, 3}
-      ]
-
+               {:build_resource_for_resource, 3},
+               {:cast_resource_for_resource, 2},
+               {:change_resource, 1},
+               {:change_resource, 2},
+               {:change_resource_create, 1},
+               {:change_resource_create, 2},
+               {:change_resource_update, 1},
+               {:change_resource_update, 2},
+               {:create_resource, 1},
+               {:create_resource, 2},
+               {:create_resource, 3},
+               {:delete_resource, 2},
+               {:get_resource, 2},
+               {:get_resource!, 2},
+               {:list_resources, 1},
+               {:update_resource, 3}
+             ]
     end
 
     test "TestContext case #2 got all functions defined" do
@@ -195,23 +194,23 @@ defmodule Fhub.AccessControlTest do
       end
 
       assert TestContext2.__info__(:functions) == [
-        {:build_resource_for_some_resource, 3},
-        {:cast_resource_for_some_resource, 2},
-        {:change_some_resource, 1},
-        {:change_some_resource, 2},
-        {:change_some_resource_create, 1},
-        {:change_some_resource_create, 2},
-        {:change_some_resource_update, 1},
-        {:change_some_resource_update, 2},
-        {:create_some_resource, 1},
-        {:create_some_resource, 2},
-        {:create_some_resource, 3},
-        {:delete_some_resource, 2},
-        {:get_some_resource, 2},
-        {:get_some_resource!, 2},
-        {:list_resourceces, 1},
-        {:update_some_resource, 3}
-      ]
+               {:build_resource_for_some_resource, 3},
+               {:cast_resource_for_some_resource, 2},
+               {:change_some_resource, 1},
+               {:change_some_resource, 2},
+               {:change_some_resource_create, 1},
+               {:change_some_resource_create, 2},
+               {:change_some_resource_update, 1},
+               {:change_some_resource_update, 2},
+               {:create_some_resource, 1},
+               {:create_some_resource, 2},
+               {:create_some_resource, 3},
+               {:delete_some_resource, 2},
+               {:get_some_resource, 2},
+               {:get_some_resource!, 2},
+               {:list_resourceces, 1},
+               {:update_some_resource, 3}
+             ]
     end
   end
 
@@ -250,7 +249,10 @@ defmodule Fhub.AccessControlTest do
       root = root_fixture()
       root_id = root.id
 
-      assert match?(%{parent_id: ^root_id}, TestContext.build_resource_for_resource(root, nil, nil))
+      assert match?(
+               %{parent_id: ^root_id},
+               TestContext.build_resource_for_resource(root, nil, nil)
+             )
     end
 
     test "change_resource/2 returns changeset" do
@@ -296,7 +298,10 @@ defmodule Fhub.AccessControlTest do
       root = root_fixture()
       resource = resource_fixture(root)
 
-      assert match?({:ok, @update_attrs}, TestContext.update_resource(resource, @update_attrs, root))
+      assert match?(
+               {:ok, @update_attrs},
+               TestContext.update_resource(resource, @update_attrs, root)
+             )
     end
   end
 

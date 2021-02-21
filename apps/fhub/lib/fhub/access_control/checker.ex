@@ -18,7 +18,8 @@ defmodule Fhub.AccessControl.Checker do
       ResourceProtocol.resource(resource, repo),
       ResourceProtocol.resource(actor, repo),
       action,
-      repo)
+      repo
+    )
     |> Enum.any?()
   end
 

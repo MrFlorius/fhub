@@ -20,7 +20,6 @@ defmodule Fhub.Documents.String do
     timestamps()
   end
 
-
   def changeset(string, attrs) do
     string
     |> cast(attrs, [:name, :value])

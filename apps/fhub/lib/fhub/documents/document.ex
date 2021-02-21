@@ -19,7 +19,6 @@ defmodule Fhub.Documents.Document do
     timestamps()
   end
 
-
   def changeset(document, attrs) do
     document
     |> cast(attrs, [:name])

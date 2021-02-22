@@ -6,7 +6,7 @@ defmodule Fhub.Repo.Migrations.CreateFiles do
       add :id, references(:resources, on_delete: :delete_all, type: :binary_id), primary_key: true
 
       add :name, :string
-      add :path, :string
+      add :file, :string
 
       timestamps()
     end

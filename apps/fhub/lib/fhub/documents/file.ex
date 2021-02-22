@@ -1,5 +1,6 @@
 defmodule Fhub.Documents.File do
   use Ecto.Schema
+  use Waffle.Ecto.Schema
   import Ecto.Changeset
 
   @primary_key {:id, :binary_id, autogenerate: false}
@@ -15,14 +16,15 @@ defmodule Fhub.Documents.File do
       on_replace: :mark_as_invalid
 
     field :name, :string
-    field :path, :string
+    field :file, Fhub.Documents.File.Uploader.Type
 
     timestamps()
   end
 
   def changeset(file, attrs) do
     file
-    |> cast(attrs, [:name, :path])
-    |> validate_required([:name, :path])
+    |> cast(attrs, [:name])
+    |> cast_attachments(attrs, [:file])
+    |> validate_required([:name, :file])
   end
 end

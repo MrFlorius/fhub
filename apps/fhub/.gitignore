@@ -3,6 +3,7 @@
 .vscode
 .DS_store
 /_build/
+priv/waffle/private
 
 # If you run "mix test --cover", coverage assets end up here.
 /cover/

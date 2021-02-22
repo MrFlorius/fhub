@@ -6,61 +6,70 @@ defmodule Fhub.AccountsTest do
   describe "users" do
     alias Fhub.Accounts.User
 
-    @valid_attrs %{resource: %{}, email: "some email", name: "some name"}
-    @update_attrs %{email: "some updated email", name: "some updated name"}
-    @invalid_attrs %{resource: %{}, email: nil, name: nil}
+    @valid_attrs %{email: "an email", name: "a user"}
+    @update_attrs %{name: "updated"}
+    @invalid_attrs %{email: nil, name: nil}
 
-    def user_fixture(attrs \\ %{}) do
-      {:ok, user} =
-        attrs
-        |> Enum.into(@valid_attrs)
-        |> Accounts.create_user()
+    def user_fixture(root) do
+      {:ok, user} = Accounts.create_user(@valid_attrs, root, root)
 
       user
     end
 
-    # test "list_users/0 returns all users" do
-    #   user = user_fixture()
-    #   assert Accounts.list_users() == [user]
-    # end
+    test "list_users/1 returns all users" do
+      root = root_fixture()
+      %User{id: id} = user_fixture(root)
 
-    # test "get_user!/1 returns the user with given id" do
-    #   user = user_fixture()
-    #   assert Accounts.get_user!(user.id) == user
-    # end
+      assert {:ok, [%User{id: ^id}]} = Accounts.list_users(root)
+    end
 
-    # test "create_user/1 with valid data creates a user" do
-    #   assert {:ok, %User{} = user} = Accounts.create_user(@valid_attrs)
-    #   assert user.email == "some email"
-    #   assert user.name == "some name"
-    # end
+    test "get_user!/1 returns the user with given id" do
+      root = root_fixture()
+      %User{id: id} = user_fixture(root)
 
-    # test "create_user/1 with invalid data returns error changeset" do
-    #   assert {:error, %Ecto.Changeset{}} = Accounts.create_user(@invalid_attrs)
-    # end
+      assert Accounts.get_user!(id, root).id == id
+    end
 
-    # test "update_user/2 with valid data updates the user" do
-    #   user = user_fixture()
-    #   assert {:ok, %User{} = user} = Accounts.update_user(user, @update_attrs)
-    #   assert user.email == "some updated email"
-    #   assert user.name == "some updated name"
-    # end
+    test "create_user/1 with valid data creates a user" do
+      root = root_fixture()
 
-    # test "update_user/2 with invalid data returns error changeset" do
-    #   user = user_fixture()
-    #   assert {:error, %Ecto.Changeset{}} = Accounts.update_user(user, @invalid_attrs)
-    #   assert user == Accounts.get_user!(user.id)
-    # end
+      assert {:ok, %{email: "an email", name: "a user"}} = Accounts.create_user(@valid_attrs, root, root)
+    end
 
-    # test "delete_user/1 deletes the user" do
-    #   user = user_fixture()
-    #   assert {:ok, %User{}} = Accounts.delete_user(user)
-    #   assert_raise Ecto.NoResultsError, fn -> Accounts.get_user!(user.id) end
-    # end
+    test "create_user/1 with invalid data returns error changeset" do
+      root = root_fixture()
 
-    # test "change_user/1 returns a user changeset" do
-    #   user = user_fixture()
-    #   assert %Ecto.Changeset{} = Accounts.change_user(user)
-    # end
+      assert {:error, %Ecto.Changeset{}} = Accounts.create_user(@invalid_attrs, root, root)
+    end
+
+    test "update_user/2 with valid data updates the user" do
+      root = root_fixture()
+      user = user_fixture(root)
+
+      assert {:ok, %{name: "updated"}} = Accounts.update_user(user, @update_attrs, root)
+    end
+
+    test "update_user/2 with invalid data returns error changeset" do
+      root = root_fixture()
+      user = user_fixture(root)
+
+      assert {:error, %Ecto.Changeset{}} = Accounts.update_user(user, @invalid_attrs, root)
+      assert user.name == Accounts.get_user!(user.id, root).name
+    end
+
+    test "delete_user/1 deletes the user" do
+      root = root_fixture()
+      user = user_fixture(root)
+
+      assert {:ok, %User{}} = Accounts.delete_user(user, root)
+      assert Accounts.get_user!(user.id, root) == nil
+    end
+
+    test "change_user/1 returns a user changeset" do
+      root = root_fixture()
+      user = user_fixture(root)
+
+      assert %Ecto.Changeset{} = Accounts.change_user(user)
+    end
   end
 end

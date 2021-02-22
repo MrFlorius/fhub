@@ -10,12 +10,6 @@ defmodule Fhub.AppsTest do
     @update_attrs %{name: "updated"}
     @invalid_attrs %{name: ""}
 
-    def app_fixture(root) do
-      {:ok, app} = Apps.create_app(@valid_attrs, root, root)
-
-      app
-    end
-
     test "list_funtions/2 returns nothing" do
       root = root_fixture()
       app = app_fixture(root)

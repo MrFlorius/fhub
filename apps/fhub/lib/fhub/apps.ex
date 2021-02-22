@@ -31,8 +31,4 @@ defmodule Fhub.Apps do
 
     Transactions.operation_filter(fn repo, _ -> {:ok, repo.all(q)} end, actor, :read)
   end
-
-  # def list_caches(%App{} = app, actor) do
-
-  # end
 end

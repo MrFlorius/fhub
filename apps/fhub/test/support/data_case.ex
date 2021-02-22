@@ -38,6 +38,36 @@ defmodule Fhub.DataCase do
 
         root
       end
+
+      def app_fixture(root) do
+        {:ok, app} = Fhub.Apps.create_app(%{name: "an app"}, root, root)
+
+        app
+      end
+
+      def document_fixture(app_or_doc, root) do
+        {:ok, document} = Fhub.Documents.create_document(%{name: "a document"}, root, app_or_doc)
+
+        document
+      end
+
+      def decimal_fixture(document, root) do
+        {:ok, decimal} = Fhub.Documents.create_decimal(%{name: "a decimal", value: 5}, root, document)
+
+        decimal
+      end
+
+      def json_fixture(document, root) do
+        {:ok, decimal} = Fhub.Documents.create_json(%{name: "a json", value: %{}}, root, document)
+
+        decimal
+      end
+
+      def string_fixture(document, root) do
+        {:ok, decimal} = Fhub.Documents.create_string(%{name: "a string", value: "smth"}, root, document)
+
+        decimal
+      end
     end
   end
 

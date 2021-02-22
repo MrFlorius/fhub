@@ -250,20 +250,6 @@ defmodule Fhub.AccessControlTest do
         resource_parent: "root"
     end
 
-    def root_fixture() do
-      {:ok, root} = Resources.create_resource(%{name: "root"})
-
-      {:ok, root_permission} =
-        AccessControl.create_permission(%{
-          can: [AccessControl.Permission.access_any()],
-          resource_id: root.id
-        })
-
-      {:ok, _} = AccessControl.add_actors(root_permission, [root])
-
-      root
-    end
-
     def resource_fixture(root) do
       {:ok, resource} = TestContext.create_resource(@valid_attrs, root)
       resource

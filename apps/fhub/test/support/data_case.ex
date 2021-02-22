@@ -24,6 +24,20 @@ defmodule Fhub.DataCase do
       import Ecto.Changeset
       import Ecto.Query
       import Fhub.DataCase
+
+      def root_fixture() do
+        {:ok, root} = Fhub.Resources.create_resource(%{name: "root"})
+
+        {:ok, root_permission} =
+          Fhub.AccessControl.create_permission(%{
+            can: [Fhub.AccessControl.Permission.access_any()],
+            resource_id: root.id
+          })
+
+        {:ok, _} = Fhub.AccessControl.add_actors(root_permission, [root])
+
+        root
+      end
     end
   end
 

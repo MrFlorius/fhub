@@ -231,6 +231,39 @@ defmodule Fhub.FunctionsTest do
       assert {:error, %Ecto.Changeset{}} = Functions.create_call(@invalid_attrs, root, version)
     end
 
+    test "create_call/3 with deleted version returns error changeset" do
+      root = root_fixture()
+      app = app_fixture(root)
+      fun = function_fixture(app, root)
+      version = version_fixture(fun, root)
+
+      Functions.delete_version(version, root)
+
+      assert {:error, %Ecto.Changeset{}} = Functions.create_call(@valid_attrs, root, version)
+    end
+
+    test "create_call/3 with runtime error in version creates a call with error in it" do
+      root = root_fixture()
+      app = app_fixture(root)
+      fun = function_fixture(app, root)
+
+      {:ok, version} =
+        Functions.create_version(%{version: 1, code: "fn x -> :a.b(x) end"}, root, fun)
+
+      assert {:ok,
+              %{
+                result: %{
+                  error: %UndefinedFunctionError{
+                    arity: 1,
+                    function: :b,
+                    message: nil,
+                    module: :a,
+                    reason: nil
+                  }
+                }
+              }} = Functions.create_call(@valid_attrs, root, version)
+    end
+
     test "update_call/3 with valid data updates the call" do
       root = root_fixture()
       app = app_fixture(root)
@@ -238,7 +271,8 @@ defmodule Fhub.FunctionsTest do
       version = version_fixture(fun, root)
       call = call_fixture(version, root)
 
-      assert {:ok, %{opts: %{smth: 1}, result: %{smth: 1}}} = Functions.update_call(call, @update_attrs, root)
+      assert {:ok, %{opts: %{smth: 1}, result: %{smth: 1}}} =
+               Functions.update_call(call, @update_attrs, root)
     end
 
     test "update_call/3 with invalid data returns error changeset" do

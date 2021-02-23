@@ -131,9 +131,7 @@ defmodule Fhub.Functions do
 
       Call.changeset(c, %{result: result})
     else
-      x ->
-        IO.inspect(x)
-        Ecto.Changeset.add_error(c, :resource, "failed to resolve version")
+      _ -> Ecto.Changeset.add_error(c, :resource, "failed to resolve version")
     end
   end
 

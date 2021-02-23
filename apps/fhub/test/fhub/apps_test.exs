@@ -10,14 +10,14 @@ defmodule Fhub.AppsTest do
     @update_attrs %{name: "updated"}
     @invalid_attrs %{name: ""}
 
-    test "list_funtions/2 returns nothing" do
+    test "list_funtions/2 returns nothing for empty app" do
       root = root_fixture()
       app = app_fixture(root)
 
       assert {:ok, []} = Apps.list_functions(app, root)
     end
 
-    test "list_documents/2 returns nothing" do
+    test "list_documents/2 returns nothing for empty app" do
       root = root_fixture()
       app = app_fixture(root)
 

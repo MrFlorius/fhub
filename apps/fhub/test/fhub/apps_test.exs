@@ -31,33 +31,33 @@ defmodule Fhub.AppsTest do
       assert {:ok, [%App{id: ^id}]} = Apps.list_apps(root)
     end
 
-    test "get_app!/1 returns the app with given id" do
+    test "get_app!/2 returns the app with given id" do
       root = root_fixture()
       %App{id: id} = app_fixture(root)
 
       assert Apps.get_app!(id, root).id == id
     end
 
-    test "create_app/1 with valid data creates a app" do
+    test "create_app/3 with valid data creates a app" do
       root = root_fixture()
 
       assert {:ok, %{name: "an app"}} = Apps.create_app(@valid_attrs, root, root)
     end
 
-    test "create_app/1 with invalid data returns error changeset" do
+    test "create_app/3 with invalid data returns error changeset" do
       root = root_fixture()
 
       assert {:error, %Ecto.Changeset{}} = Apps.create_app(@invalid_attrs, root, root)
     end
 
-    test "update_app/2 with valid data updates the app" do
+    test "update_app/3 with valid data updates the app" do
       root = root_fixture()
       app = app_fixture(root)
 
       assert {:ok, %{name: "updated"}} = Apps.update_app(app, @update_attrs, root)
     end
 
-    test "update_app/2 with invalid data returns error changeset" do
+    test "update_app/3 with invalid data returns error changeset" do
       root = root_fixture()
       app = app_fixture(root)
 
@@ -65,7 +65,7 @@ defmodule Fhub.AppsTest do
       assert app.name == Apps.get_app!(app.id, root).name
     end
 
-    test "delete_app/1 deletes the app" do
+    test "delete_app2 deletes the app" do
       root = root_fixture()
       app = app_fixture(root)
 

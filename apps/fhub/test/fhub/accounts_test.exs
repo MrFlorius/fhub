@@ -23,33 +23,33 @@ defmodule Fhub.AccountsTest do
       assert {:ok, [%User{id: ^id}]} = Accounts.list_users(root)
     end
 
-    test "get_user!/1 returns the user with given id" do
+    test "get_user!/2 returns the user with given id" do
       root = root_fixture()
       %User{id: id} = user_fixture(root)
 
       assert Accounts.get_user!(id, root).id == id
     end
 
-    test "create_user/1 with valid data creates a user" do
+    test "create_user/3 with valid data creates a user" do
       root = root_fixture()
 
       assert {:ok, %{email: "an email", name: "a user"}} = Accounts.create_user(@valid_attrs, root, root)
     end
 
-    test "create_user/1 with invalid data returns error changeset" do
+    test "create_user/3 with invalid data returns error changeset" do
       root = root_fixture()
 
       assert {:error, %Ecto.Changeset{}} = Accounts.create_user(@invalid_attrs, root, root)
     end
 
-    test "update_user/2 with valid data updates the user" do
+    test "update_user/3 with valid data updates the user" do
       root = root_fixture()
       user = user_fixture(root)
 
       assert {:ok, %{name: "updated"}} = Accounts.update_user(user, @update_attrs, root)
     end
 
-    test "update_user/2 with invalid data returns error changeset" do
+    test "update_user/3 with invalid data returns error changeset" do
       root = root_fixture()
       user = user_fixture(root)
 
@@ -57,7 +57,7 @@ defmodule Fhub.AccountsTest do
       assert user.name == Accounts.get_user!(user.id, root).name
     end
 
-    test "delete_user/1 deletes the user" do
+    test "delete_user/2 deletes the user" do
       root = root_fixture()
       user = user_fixture(root)
 

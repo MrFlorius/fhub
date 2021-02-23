@@ -62,7 +62,7 @@ defmodule Fhub.DocumentsTest do
       assert {:ok, [%Document{id: ^id}]} = Documents.list_documents(root)
     end
 
-    test "get_document!/1 returns the document with given id" do
+    test "get_document!/2 returns the document with given id" do
       root = root_fixture()
       app = app_fixture(root)
       %Document{id: id} = document_fixture(app, root)
@@ -70,21 +70,21 @@ defmodule Fhub.DocumentsTest do
       assert Documents.get_document!(id, root).id == id
     end
 
-    test "create_document/1 with valid data creates a document" do
+    test "create_document/3 with valid data creates a document" do
       root = root_fixture()
       app = app_fixture(root)
 
       assert {:ok, %{name: "a document"}} = Documents.create_document(@valid_attrs, root, app)
     end
 
-    test "create_document/1 with invalid data returns error changeset" do
+    test "create_document/3 with invalid data returns error changeset" do
       root = root_fixture()
       app = app_fixture(root)
 
       assert {:error, %Ecto.Changeset{}} = Documents.create_document(@invalid_attrs, root, app)
     end
 
-    test "update_document/2 with valid data updates the document" do
+    test "update_document/3 with valid data updates the document" do
       root = root_fixture()
       app = app_fixture(root)
       document = document_fixture(app, root)
@@ -92,7 +92,7 @@ defmodule Fhub.DocumentsTest do
       assert {:ok, %{name: "updated"}} = Documents.update_document(document, @update_attrs, root)
     end
 
-    test "update_document/2 with invalid data returns error changeset" do
+    test "update_document/3 with invalid data returns error changeset" do
       root = root_fixture()
       app = app_fixture(root)
       document = document_fixture(app, root)
@@ -103,7 +103,7 @@ defmodule Fhub.DocumentsTest do
       assert document.name == Documents.get_document!(document.id, root).name
     end
 
-    test "delete_document/1 deletes the document" do
+    test "delete_document/2 deletes the document" do
       root = root_fixture()
       app = app_fixture(root)
       document = document_fixture(app, root)
@@ -155,7 +155,7 @@ defmodule Fhub.DocumentsTest do
       assert Documents.get_decimal!(id, root).id == id
     end
 
-    test "create_decimal/1 with valid data creates a decimal" do
+    test "create_decimal/3 with valid data creates a decimal" do
       root = root_fixture()
       app = app_fixture(root)
       doc = document_fixture(app, root)
@@ -163,7 +163,7 @@ defmodule Fhub.DocumentsTest do
       assert {:ok, %{name: "a decimal"}} = Documents.create_decimal(@valid_attrs, root, doc)
     end
 
-    test "create_decimal/1 with invalid data returns error changeset" do
+    test "create_decimal/3 with invalid data returns error changeset" do
       root = root_fixture()
       app = app_fixture(root)
       doc = document_fixture(app, root)
@@ -171,7 +171,7 @@ defmodule Fhub.DocumentsTest do
       assert {:error, %Ecto.Changeset{}} = Documents.create_decimal(@invalid_attrs, root, doc)
     end
 
-    test "update_decimal/2 with valid data updates the decimal" do
+    test "update_decimal/3 with valid data updates the decimal" do
       root = root_fixture()
       app = app_fixture(root)
       doc = document_fixture(app, root)
@@ -180,7 +180,7 @@ defmodule Fhub.DocumentsTest do
       assert {:ok, %{name: "updated"}} = Documents.update_decimal(decimal, @update_attrs, root)
     end
 
-    test "update_decimal/2 with invalid data returns error changeset" do
+    test "update_decimal/3 with invalid data returns error changeset" do
       root = root_fixture()
       app = app_fixture(root)
       doc = document_fixture(app, root)
@@ -192,7 +192,7 @@ defmodule Fhub.DocumentsTest do
       assert decimal.name == Documents.get_decimal!(decimal.id, root).name
     end
 
-    test "delete_decimal/1 deletes the decimal" do
+    test "delete_decimal/2 deletes the decimal" do
       root = root_fixture()
       app = app_fixture(root)
       doc = document_fixture(app, root)
@@ -237,7 +237,7 @@ defmodule Fhub.DocumentsTest do
       assert {:ok, [%Json{id: ^id}]} = Documents.list_jsons(root)
     end
 
-    test "get_json!/1 returns the json with given id" do
+    test "get_json!/2 returns the json with given id" do
       root = root_fixture()
       app = app_fixture(root)
       doc = document_fixture(app, root)
@@ -246,7 +246,7 @@ defmodule Fhub.DocumentsTest do
       assert Documents.get_json!(id, root).id == id
     end
 
-    test "create_json/1 with valid data creates a json" do
+    test "create_json/3 with valid data creates a json" do
       root = root_fixture()
       app = app_fixture(root)
       doc = document_fixture(app, root)
@@ -254,7 +254,7 @@ defmodule Fhub.DocumentsTest do
       assert {:ok, %{name: "a json"}} = Documents.create_json(@valid_attrs, root, doc)
     end
 
-    test "create_json/1 with invalid data returns error changeset" do
+    test "create_json/3 with invalid data returns error changeset" do
       root = root_fixture()
       app = app_fixture(root)
       doc = document_fixture(app, root)
@@ -262,7 +262,7 @@ defmodule Fhub.DocumentsTest do
       assert {:error, %Ecto.Changeset{}} = Documents.create_json(@invalid_attrs, root, doc)
     end
 
-    test "update_json/2 with valid data updates the json" do
+    test "update_json/3 with valid data updates the json" do
       root = root_fixture()
       app = app_fixture(root)
       doc = document_fixture(app, root)
@@ -271,7 +271,7 @@ defmodule Fhub.DocumentsTest do
       assert {:ok, %{name: "updated"}} = Documents.update_json(json, @update_attrs, root)
     end
 
-    test "update_json/2 with invalid data returns error changeset" do
+    test "update_json/3 with invalid data returns error changeset" do
       root = root_fixture()
       app = app_fixture(root)
       doc = document_fixture(app, root)
@@ -283,7 +283,7 @@ defmodule Fhub.DocumentsTest do
       assert json.name == Documents.get_json!(json.id, root).name
     end
 
-    test "delete_json/1 deletes the json" do
+    test "delete_json/2 deletes the json" do
       root = root_fixture()
       app = app_fixture(root)
       doc = document_fixture(app, root)
@@ -328,7 +328,7 @@ defmodule Fhub.DocumentsTest do
       assert {:ok, [%String{id: ^id}]} = Documents.list_strings(root)
     end
 
-    test "get_string!/1 returns the string with given id" do
+    test "get_string!/2 returns the string with given id" do
       root = root_fixture()
       app = app_fixture(root)
       doc = document_fixture(app, root)
@@ -337,7 +337,7 @@ defmodule Fhub.DocumentsTest do
       assert Documents.get_string!(id, root).id == id
     end
 
-    test "create_string/1 with valid data creates a string" do
+    test "create_string/3 with valid data creates a string" do
       root = root_fixture()
       app = app_fixture(root)
       doc = document_fixture(app, root)
@@ -345,7 +345,7 @@ defmodule Fhub.DocumentsTest do
       assert {:ok, %{name: "a string"}} = Documents.create_string(@valid_attrs, root, doc)
     end
 
-    test "create_string/1 with invalid data returns error changeset" do
+    test "create_string/3 with invalid data returns error changeset" do
       root = root_fixture()
       app = app_fixture(root)
       doc = document_fixture(app, root)
@@ -353,7 +353,7 @@ defmodule Fhub.DocumentsTest do
       assert {:error, %Ecto.Changeset{}} = Documents.create_string(@invalid_attrs, root, doc)
     end
 
-    test "update_string/2 with valid data updates the string" do
+    test "update_string/3 with valid data updates the string" do
       root = root_fixture()
       app = app_fixture(root)
       doc = document_fixture(app, root)
@@ -362,7 +362,7 @@ defmodule Fhub.DocumentsTest do
       assert {:ok, %{name: "updated"}} = Documents.update_string(string, @update_attrs, root)
     end
 
-    test "update_string/2 with invalid data returns error changeset" do
+    test "update_string/3 with invalid data returns error changeset" do
       root = root_fixture()
       app = app_fixture(root)
       doc = document_fixture(app, root)
@@ -374,7 +374,7 @@ defmodule Fhub.DocumentsTest do
       assert string.name == Documents.get_string!(string.id, root).name
     end
 
-    test "delete_string/1 deletes the string" do
+    test "delete_string/2 deletes the string" do
       root = root_fixture()
       app = app_fixture(root)
       doc = document_fixture(app, root)
@@ -384,7 +384,7 @@ defmodule Fhub.DocumentsTest do
       assert Documents.get_string!(string.id, root) == nil
     end
 
-    test "change_string/1 returns a string changeset" do
+    test "change_string/2 returns a string changeset" do
       root = root_fixture()
       app = app_fixture(root)
       doc = document_fixture(app, root)

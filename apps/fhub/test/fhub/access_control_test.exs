@@ -22,7 +22,7 @@ defmodule Fhub.AccessControlTest do
       permission
     end
 
-    def resource_fixture() do
+    def context_resource_fixture() do
       {:ok, resource} = Resources.create_resource()
       resource
     end
@@ -77,7 +77,7 @@ defmodule Fhub.AccessControlTest do
 
     test "add_actors/2 actually adds actors" do
       permission = permission_fixture()
-      actor = resource_fixture()
+      actor = context_resource_fixture()
       {:ok, %{actors: a}} = AccessControl.add_actors(permission, [actor])
 
       assert length(a) == 1
@@ -85,7 +85,7 @@ defmodule Fhub.AccessControlTest do
 
     test "remove_actors/2 actually removes actors" do
       permission = permission_fixture()
-      actor = resource_fixture()
+      actor = context_resource_fixture()
 
       {:ok, %{actors: a}} = AccessControl.remove_actors(permission, [actor])
       assert length(a) == 0
@@ -250,7 +250,7 @@ defmodule Fhub.AccessControlTest do
         resource_parent: "root"
     end
 
-    def resource_fixture(root) do
+    def context_resource_fixture(root) do
       {:ok, resource} = TestContext.create_resource(@valid_attrs, root)
       resource
     end
@@ -277,14 +277,14 @@ defmodule Fhub.AccessControlTest do
 
     test "delete_resource/2 deletes resource if actor has permission" do
       root = root_fixture()
-      resource = resource_fixture(root)
+      resource = context_resource_fixture(root)
 
       assert match?({:ok, _}, TestContext.delete_resource(resource, root))
     end
 
     test "get_resource/2 returns resource if actor has access to" do
       root = root_fixture()
-      resource = resource_fixture(root)
+      resource = context_resource_fixture(root)
 
       assert match?({:ok, _}, TestContext.get_resource(resource.id, root))
     end
@@ -297,7 +297,7 @@ defmodule Fhub.AccessControlTest do
 
     test "list_resources/1 returns all resources to which actor has access" do
       root = root_fixture()
-      resource = resource_fixture(root)
+      resource = context_resource_fixture(root)
 
       {:ok, [r]} = TestContext.list_resources(root)
 
@@ -306,7 +306,7 @@ defmodule Fhub.AccessControlTest do
 
     test "update_resource/3 updates a resource to which actor has access" do
       root = root_fixture()
-      resource = resource_fixture(root)
+      resource = context_resource_fixture(root)
 
       assert match?(
                {:ok, @update_attrs},

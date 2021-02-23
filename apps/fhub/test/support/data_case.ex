@@ -25,6 +25,15 @@ defmodule Fhub.DataCase do
       import Ecto.Query
       import Fhub.DataCase
 
+      def resource_fixture(attrs \\ %{}) do
+        {:ok, resource} =
+          attrs
+          |> Enum.into(%{name: "a resource"})
+          |> Fhub.Resources.create_resource()
+
+        resource
+      end
+
       def root_fixture() do
         {:ok, root} = Fhub.Resources.create_resource(%{name: "root"})
 

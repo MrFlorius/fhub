@@ -51,7 +51,7 @@ defmodule Fhub.Documents do
          {:ok, d2} <- list_decimals(document, actor),
          {:ok, s} <- list_strings(document, actor),
          {:ok, j} <- list_jsons(document, actor) do
-      d1 ++ d2 ++ s ++ j
+      {:ok, d1 ++ d2 ++ s ++ j}
     end
   end
 

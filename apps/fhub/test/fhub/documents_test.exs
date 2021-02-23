@@ -46,6 +46,14 @@ defmodule Fhub.DocumentsTest do
               }} = Documents.document_schema(app, root)
     end
 
+    test "document_fields/2 returns nothing for empty document" do
+      root = root_fixture()
+      app = app_fixture(root)
+      doc = document_fixture(app, root)
+
+      assert {:ok, []} = Documents.document_fields(doc, root)
+    end
+
     test "list_documents/1 returns all documents" do
       root = root_fixture()
       app = app_fixture(root)

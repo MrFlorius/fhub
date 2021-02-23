@@ -12,7 +12,6 @@ defmodule Fhub.Functions do
   use Fhub.AccessControl.Context, for: Version
   use Fhub.AccessControl.Context, for: Call
 
-  # TODO: Make function's parent only app
   # Functions
   def build_resource_for_function(parent, _actor, changeset) do
     %{name: name} = Ecto.Changeset.apply_changes(changeset)
@@ -23,6 +22,9 @@ defmodule Fhub.Functions do
 
   def create_function(attrs, actor, %App{} = parent), do: super(attrs, actor, parent)
 
+  def update_function(%Function{} = s, attrs, actor),
+    do: update_for(s, attrs, actor, &change_function_update/2, &cast_resource_for_function/2, fn s -> Map.fetch!(s, :name) end)
+
   # Versions
   def build_resource_for_version(parent, _actor, changeset) do
     %{version: v} = Ecto.Changeset.apply_changes(changeset)
@@ -32,6 +34,9 @@ defmodule Fhub.Functions do
   end
 
   def create_version(attrs, actor, %Function{} = parent), do: super(attrs, actor, parent)
+
+  def update_version(%Version{} = s, attrs, actor),
+    do: update_for(s, attrs, actor, &change_version_update/2, &cast_resource_for_version/2, fn s -> "v#{Map.fetch!(s, :version)}" end)
   def list_versions(%Function{} = f, actor) do
     q =
       from v in Version,
@@ -130,5 +135,22 @@ defmodule Fhub.Functions do
         IO.inspect(x)
         Ecto.Changeset.add_error(c, :resource, "failed to resolve version")
     end
+  end
+
+  defp update_for(s, attrs, actor, change, cast_resource, get_resource_name) do
+    transaction = fn repo, _ ->
+      s
+      |> repo.preload([:resource])
+      |> change.(attrs)
+      |> (fn c ->
+            name = get_resource_name.(Ecto.Changeset.apply_changes(c))
+            %{resource: %{id: id, parent_id: parent_id}} = s
+
+            cast_resource.(c, %{id: id, parent_id: parent_id, name: name})
+          end).()
+      |> repo.update()
+    end
+
+    Fhub.AccessControl.Transactions.operation(transaction, actor, :update)
   end
 end

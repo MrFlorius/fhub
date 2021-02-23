@@ -68,6 +68,24 @@ defmodule Fhub.DataCase do
 
         decimal
       end
+
+      def function_fixture(app, root) do
+        {:ok, function} = Fhub.Functions.create_function(%{name: "a function"}, root, app)
+
+        function
+      end
+
+      def version_fixture(function, root) do
+        {:ok, version} = Fhub.Functions.create_version(%{version: 1, code: "fn x -> x end"}, root, function)
+
+        version
+      end
+
+      def call_fixture(version, root) do
+        {:ok, call} = Fhub.Functions.create_call(%{opts: %{}}, root, version)
+
+        call
+      end
     end
   end
 

@@ -7,9 +7,9 @@ defmodule Pipeline.Remote.Elixir.Compile do
   @impl Pipeline
   @spec run(state) :: {:ok, state} | {:error, Pipeline.Error.t()}
 
-  def run(%{compiled_function: f} = state) when is_function(f) do
-    {:ok, state}
-  end
+  # def run(%{compiled_function: f} = state) when is_function(f) do
+  #   {:ok, state}
+  # end
 
   def run(%{code: code} = state) when is_bitstring(code) do
     with {:ok, state} <- check(state),

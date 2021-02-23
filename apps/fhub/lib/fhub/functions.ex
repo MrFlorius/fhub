@@ -11,6 +11,11 @@ defmodule Fhub.Functions do
   use Fhub.AccessControl.Context, for: Version
   use Fhub.AccessControl.Context, for: Call
 
+  # TODO: Enforce unique Funtions names
+  # TODO: Forbid to update Versions and Calls
+  # TODO: Make function's parent only app
+  # TODO: Make version's parent only function
+  # TODO: Make call's parent only version
   def list_versions(%Function{} = f, actor) do
     q =
       from v in Version,
@@ -52,9 +57,32 @@ defmodule Fhub.Functions do
     Transactions.operation_filter(fn repo, _ -> {:ok, repo.all(q)} end, actor, :read)
   end
 
-  def change_call_create(c, attrs \\ %{}) do
-    c = super(c, attrs)
-    if c.valid?, do: execute_call(c), else: c
+  def create_call(attrs, actor, parent) do
+    t = fn repo, _ ->
+      %Call{}
+      |> change_call_create(attrs)
+      |> (fn c ->
+            cast_resource_for_call(
+              c,
+              build_resource_for_call(parent, actor, c)
+            )
+          end).()
+      |> execute_call()
+      |> repo.insert()
+    end
+
+    Fhub.AccessControl.Transactions.operation(t, actor, :create)
+  end
+
+  def update_call(%Call{} = s, attrs, actor) do
+    t = fn repo, _ ->
+      s
+      |> change_call_update(attrs)
+      |> execute_call()
+      |> repo.update()
+    end
+
+    Fhub.AccessControl.Transactions.operation(t, actor, :update)
   end
 
   defp compile_version(%Ecto.Changeset{} = c) do
@@ -79,10 +107,7 @@ defmodule Fhub.Functions do
           {:error, e} -> e
         end
 
-      IO.inspect(result)
-
       Call.changeset(c, %{result: result})
-      |> IO.inspect()
     else
       x ->
         IO.inspect(x)

@@ -7,8 +7,8 @@ defmodule Fhub.Resources do
 
   alias Fhub.Repo
   alias Fhub.Resources.Resource
-
   alias Fhub.Resources.Path
+  alias Fhub.Resources.Tree
 
   def list_resources do
     Repo.all(Resource)
@@ -25,18 +25,18 @@ defmodule Fhub.Resources do
     Repo.transaction(fn repo ->
       case Path.reduce_to_names(path) do
         {nil, p} ->
-          Resource.roots()
-          |> repo.all()
+          Tree.roots(repo)
           |> do_get_resource_by_path(p, repo)
+
+        {id, []} -> repo.get!(Resource, id)
 
         {id, p} ->
           %Resource{id: id}
-          |> Resource.children()
-          |> repo.all()
+          |> Tree.children(repo)
           |> do_get_resource_by_path(p, repo)
       end
       |> case do
-        :error -> repo.rollback(:does_not_exists)
+        nil -> repo.rollback(:does_not_exists)
         r -> r
       end
     end)
@@ -66,25 +66,20 @@ defmodule Fhub.Resources do
     Resource.changeset(resource, attrs)
   end
 
-  defp do_get_resource_by_path([r], [], _), do: r
+  def do_get_resource_by_path(%{name: p} = r, [p], _repo), do: r
 
-  defp do_get_resource_by_path(rs, [p], _rp) do
-    rs
-    |> Enum.filter(fn %{name: n} -> n == p end)
+  def do_get_resource_by_path(%{name: p} = r, [p | tail], repo) do
+    r
+    |> Tree.children(repo)
+    |> do_get_resource_by_path(tail, repo)
+  end
+
+  def do_get_resource_by_path(r, p, repo) when is_list(r) do
+    r
+    |> Enum.map(fn r -> do_get_resource_by_path(r, p, repo) end)
+    |> Enum.filter(fn x -> x end)
     |> Enum.at(0)
   end
 
-  defp do_get_resource_by_path(rs, [p | tail] = path, rp) when length(path) > 0 do
-    rs
-    |> Enum.filter(fn %{name: n} -> n == p end)
-    |> Enum.map(fn r ->
-      r
-      |> Resource.children()
-      |> rp.all()
-      |> do_get_resource_by_path(tail, rp)
-    end)
-    |> Enum.at(0)
-  end
-
-  defp do_get_resource_by_path(_, _, _), do: :error
+  def do_get_resource_by_path(_, _, _), do: nil
 end

@@ -52,4 +52,9 @@ defmodule Fhub.Resources.Tree do
     |> Resource.children()
     |> repo.all()
   end
+
+  def roots(repo \\ Fhub.Repo) do
+    Resource.roots()
+    |> repo.all()
+  end
 end

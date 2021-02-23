@@ -55,19 +55,76 @@ defmodule Fhub.ResourcesTest do
   end
 
   describe "tree" do
+    alias Fhub.Resources.Tree
 
+    test "ancestors/3" do
+      r1 = resource_fixture(%{name: "r1"})
+      _r2 = resource_fixture(%{name: "r2", parent_id: r1.id})
+      r3 = resource_fixture(%{name: "r3", parent_id: r1.id})
+      r4 = resource_fixture(%{name: "r4", parent_id: r3.id})
+
+      assert [] = Tree.ancestors(r1)
+      assert [^r1] = Tree.ancestors(r1, true)
+
+      assert [^r1, ^r3] = Tree.ancestors(r4)
+    end
+
+    test "descendats/3" do
+      r1 = resource_fixture(%{name: "r1"})
+      _r2 = resource_fixture(%{name: "r2", parent_id: r1.id})
+      r3 = resource_fixture(%{name: "r3", parent_id: r1.id})
+      _r4 = resource_fixture(%{name: "r4", parent_id: r3.id})
+
+      assert [{%{name: "r2"}, []}, {%{name: "r3"}, [{%{name: "r4"}, []}]}] = Tree.descendants(r1)
+
+      assert {%{name: "r1"}, [{%{name: "r2"}, []}, {%{name: "r3"}, [{%{name: "r4"}, []}]}]} =
+               Tree.descendants(r1, true)
+    end
+
+    test "parent/2" do
+      r1 = resource_fixture(%{name: "r1"})
+      r2 = resource_fixture(%{name: "r2", parent_id: r1.id})
+      r3 = resource_fixture(%{name: "r3", parent_id: r1.id})
+      r4 = resource_fixture(%{name: "r4", parent_id: r3.id})
+
+      assert nil == Tree.parent(r1)
+      assert r1.id == Tree.parent(r2).id
+      assert r1.id == Tree.parent(r3).id
+      assert r3.id == Tree.parent(r4).id
+    end
+
+    test "children/2" do
+      r1 = resource_fixture(%{name: "r1"})
+      r2 = resource_fixture(%{name: "r2", parent_id: r1.id})
+      r3 = resource_fixture(%{name: "r3", parent_id: r1.id})
+      r4 = resource_fixture(%{name: "r4", parent_id: r3.id})
+
+      assert [%{name: "r2"}, %{name: "r3"}] = Tree.children(r1)
+      assert [] = Tree.children(r2)
+      assert [%{name: "r4"}] = Tree.children(r3)
+      assert [] = Tree.children(r4)
+    end
+
+    test "roots/1" do
+      r1 = resource_fixture(%{name: "r1"})
+      _r2 = resource_fixture(%{name: "r2", parent_id: r1.id})
+      r3 = resource_fixture(%{name: "r3", parent_id: r1.id})
+      _r4 = resource_fixture(%{name: "r4", parent_id: r3.id})
+
+      assert [%{name: "r1"}] = Tree.roots()
+    end
   end
 
   describe "path" do
     alias Fhub.Resources.Path
 
     test "reduce_to_names/1 returns {nil, names} for names only list" do
-      assert {nil, ["1", "2"]} = Path.reduce_to_names([name: "1", name: "2"])
+      assert {nil, ["1", "2"]} = Path.reduce_to_names(name: "1", name: "2")
       assert {nil, ["1", "2"]} = Path.reduce_to_names(["1", "2"])
     end
 
     test "reduce_to_names/1 returns {id, names} for names and ids list" do
-      assert {1, ["1", "2"]} = Path.reduce_to_names([id: 1, name: "1", name: "2"])
+      assert {1, ["1", "2"]} = Path.reduce_to_names(id: 1, name: "1", name: "2")
       assert {1, ["1", "2"]} = Path.reduce_to_names(["smth", id: 1, name: "1", name: "2"])
     end
 
@@ -82,7 +139,8 @@ defmodule Fhub.ResourcesTest do
       assert {:ok, %{id: ^id3}} = Resources.get_resource_by_path(["r1", "r3"])
       assert {:ok, %{id: ^id4}} = Resources.get_resource_by_path(["r1", "r3", "r4"])
 
-      assert {:ok, %{id: ^id4}} = Resources.get_resource_by_path(name: "r1", name: "r3", name: "r4")
+      assert {:ok, %{id: ^id4}} =
+               Resources.get_resource_by_path(name: "r1", name: "r3", name: "r4")
 
       assert {:ok, %{id: ^id1}} = Resources.get_resource_by_path(id: id1)
       assert {:ok, %{id: ^id2}} = Resources.get_resource_by_path(id: id1, name: "r2")

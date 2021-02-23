@@ -9,7 +9,6 @@ defmodule Fhub.Apps do
 
   use Fhub.AccessControl.Context, for: App
 
-  # TODO: Enforce unique Apps names
   def update_app(app = %App{}, attrs, actor) do
     transaction = fn repo, _ ->
       app

@@ -1,5 +1,6 @@
 defmodule Fhub.Functions do
   alias Fhub.Resources
+  alias Fhub.Apps.App
   alias Fhub.Functions.Function
   alias Fhub.Functions.Version
   alias Fhub.Functions.Call
@@ -11,11 +12,26 @@ defmodule Fhub.Functions do
   use Fhub.AccessControl.Context, for: Version
   use Fhub.AccessControl.Context, for: Call
 
-  # TODO: Enforce unique Funtions names
-  # TODO: Forbid to update Versions and Calls
   # TODO: Make function's parent only app
-  # TODO: Make version's parent only function
-  # TODO: Make call's parent only version
+  # Functions
+  def build_resource_for_function(parent, _actor, changeset) do
+    %{name: name} = Ecto.Changeset.apply_changes(changeset)
+    r = Fhub.Resources.ResourceProtocol.resource(parent)
+
+    %{parent_id: r.id, name: name}
+  end
+
+  def create_function(attrs, actor, %App{} = parent), do: super(attrs, actor, parent)
+
+  # Versions
+  def build_resource_for_version(parent, _actor, changeset) do
+    %{version: v} = Ecto.Changeset.apply_changes(changeset)
+    r = Fhub.Resources.ResourceProtocol.resource(parent)
+
+    %{parent_id: r.id, name: "v#{v}"}
+  end
+
+  def create_version(attrs, actor, %Function{} = parent), do: super(attrs, actor, parent)
   def list_versions(%Function{} = f, actor) do
     q =
       from v in Version,
@@ -33,6 +49,7 @@ defmodule Fhub.Functions do
     if c.valid?, do: compile_version(c), else: c
   end
 
+  # Calls
   def list_calls(%Version{} = v, actor) do
     q =
       from c in Call,
@@ -57,7 +74,7 @@ defmodule Fhub.Functions do
     Transactions.operation_filter(fn repo, _ -> {:ok, repo.all(q)} end, actor, :read)
   end
 
-  def create_call(attrs, actor, parent) do
+  def create_call(attrs, actor, %Version{} = parent) do
     t = fn repo, _ ->
       %Call{}
       |> change_call_create(attrs)

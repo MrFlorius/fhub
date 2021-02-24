@@ -1,4 +1,4 @@
-defmodule ResourceProtocol.AnyTest do
+defmodule Fhub.ResourceProtocolTest do
   use Fhub.DataCase
   alias Fhub.Resources.ResourceProtocol
 

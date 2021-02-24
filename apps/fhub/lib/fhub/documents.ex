@@ -36,12 +36,12 @@ defmodule Fhub.Documents do
 
       %{
         parent: document_or_app,
-        children:
-          Enum.map(docs, fn d ->
-            {:ok, docs} = list_documents(d, actor)
-
-            %{parent: d, children: docs}
-          end)
+        children: Enum.map(docs, fn d ->
+          case document_schema(d, actor) do
+            {:ok, %{parent: p, children: []}} -> p
+            {:ok, s} -> s
+          end
+        end)
       }
     end)
   end

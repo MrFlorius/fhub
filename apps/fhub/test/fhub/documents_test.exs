@@ -32,7 +32,8 @@ defmodule Fhub.DocumentsTest do
       root = root_fixture()
       app = %{id: app_id} = app_fixture(root)
       doc = %{id: doc_id} = document_fixture(app, root)
-      _doc2 = %{id: doc2_id} = document_fixture(doc, root)
+      doc2 = %{id: doc2_id} = document_fixture(doc, root)
+      _doc3 = %{id: doc3_id} = document_fixture(doc2, root)
 
       assert {:ok,
               %{
@@ -40,7 +41,14 @@ defmodule Fhub.DocumentsTest do
                 children: [
                   %{
                     parent: %{id: ^doc_id},
-                    children: [%{id: ^doc2_id}]
+                    children: [
+                      %{
+                        parent: %{id: ^doc2_id},
+                        children: [
+                          %{id: ^doc3_id}
+                        ]
+                      }
+                    ]
                   }
                 ]
               }} = Documents.document_schema(app, root)

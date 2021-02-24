@@ -95,6 +95,12 @@ defmodule Fhub.DataCase do
 
         call
       end
+
+      def user_fixture(root) do
+        {:ok, user} = Fhub.Accounts.create_user(%{email: "an email", name: "a user"}, root, root)
+
+        user
+      end
     end
   end
 

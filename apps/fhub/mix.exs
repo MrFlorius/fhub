@@ -14,7 +14,15 @@ defmodule Fhub.MixProject do
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
       deps: deps(),
-      test_coverage: [ignore_modules: [Fhub.Repo, Fhub.DataCase]]
+      test_coverage: [
+        ignore_modules: [
+          Fhub.Repo,
+          Fhub.DataCase,
+          Fhub.Documents.File.Uploader.Type,
+          Fhub.Resources.ResourceProtocol.Any,
+          Fhub.Resources.ResourceProtocol.Fhub.Resources.Resource
+        ]
+      ]
     ]
   end
 

@@ -2,11 +2,11 @@ defimpl Fhub.Resources.ResourceProtocol, for: Fhub.Resources.Resource do
   alias Fhub.Resources.Resource
 
   @spec resource(Fhub.Resources.Resource.t(), Ecto.Repo.t()) :: Fhub.Resources.Resource.t()
-  def resource(%Resource{} = r, _), do: r
+  def resource(%Resource{} = r, _ \\ Fhub.Repo), do: r
 
-  def preload(%Resource{} = r, _), do: r
+  def preload(%Resource{} = r, _ \\ Fhub.Repo), do: r
 
-  def convert(%Resource{} = r, repo) do
+  def convert(%Resource{} = r, repo \\ Fhub.Repo) do
     {_, impls} = Fhub.Resources.ResourceProtocol.__protocol__(:impls)
 
     {:ok, x} =
@@ -30,6 +30,7 @@ end
 defimpl Fhub.Resources.ResourceProtocol, for: Any do
   alias Fhub.Resources.Resource
 
+  def resource(r, repo \\ Fhub.Repo)
   def resource(%{resource: %Resource{} = r}, _), do: r
 
   def resource(%{__struct__: _} = r, repo) do
@@ -38,11 +39,11 @@ defimpl Fhub.Resources.ResourceProtocol, for: Any do
     |> Map.get(:resource)
   end
 
-  def preload(%{__struct__: _} = r, repo) do
+  def preload(%{__struct__: _} = r, repo \\ Fhub.Repo) do
     repo.preload(r, :resource)
   end
 
-  def convert(_, _), do: :not_implemented
+  def convert(_, _ \\ Fhub.Repo), do: :not_implemented
 
   defmacro __deriving__(module, struct, options) do
     res = Keyword.get(options, :resource_field, :resource)
@@ -51,6 +52,7 @@ defimpl Fhub.Resources.ResourceProtocol, for: Any do
       defimpl Fhub.Resources.ResourceProtocol, for: unquote(module) do
         alias Fhub.Resources.Resource
 
+        def resource(r, repo \\ Fhub.Repo)
         def resource(%{unquote(res) => %Resource{} = r}, _), do: r
 
         def resource(%{__struct__: unquote(struct.__struct__)} = r, repo) do
@@ -59,11 +61,11 @@ defimpl Fhub.Resources.ResourceProtocol, for: Any do
           |> Map.get(unquote(res))
         end
 
-        def preload(%{__struct__: unquote(struct.__struct__)} = r, repo) do
+        def preload(%{__struct__: unquote(struct.__struct__)} = r, repo \\ Fhub.Repo) do
           repo.preload(r, unquote(res))
         end
 
-        def convert(%Resource{id: id} = r, repo) do
+        def convert(%Resource{id: id} = r, repo \\ Fhub.Repo) do
           require Ecto.Query
 
           Ecto.Query.from(

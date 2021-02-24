@@ -10,12 +10,6 @@ defmodule Fhub.AccountsTest do
     @update_attrs %{name: "updated"}
     @invalid_attrs %{email: nil, name: nil}
 
-    def user_fixture(root) do
-      {:ok, user} = Accounts.create_user(@valid_attrs, root, root)
-
-      user
-    end
-
     test "list_users/1 returns all users" do
       root = root_fixture()
       %User{id: id} = user_fixture(root)

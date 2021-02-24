@@ -72,6 +72,11 @@ defmodule Fhub.AccessControlTest do
 
     test "change_permission/1 returns a permission changeset" do
       permission = permission_fixture()
+      assert %Ecto.Changeset{} = AccessControl.change_permission(permission, %{can: [:read]})
+    end
+
+    test "change_permission/0 returns a permission changeset" do
+      permission = permission_fixture()
       assert %Ecto.Changeset{} = AccessControl.change_permission(permission)
     end
 
@@ -94,6 +99,17 @@ defmodule Fhub.AccessControlTest do
 
       {:ok, %{actors: b}} = AccessControl.remove_actors(permission, [actor])
       assert length(b) == 0
+    end
+
+    test "assign_actors/2 actually assigns actors" do
+      permission = permission_fixture()
+      actor = context_resource_fixture()
+
+      {:ok, %{actors: a}} = AccessControl.assign_actors(permission, [actor])
+      assert length(a) == 1
+
+      {:ok, %{actors: a}} = AccessControl.assign_actors(permission, [])
+      assert length(a) == 0
     end
   end
 

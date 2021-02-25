@@ -24,7 +24,12 @@ defmodule Fhub.Documents.File do
   def changeset(file, attrs) do
     file
     |> cast(attrs, [:name])
+    |> validate_required([:name])
+  end
+
+  def store_file_changeset(file, attrs) do
+    file
     |> cast_attachments(attrs, [:file])
-    |> validate_required([:name, :file])
+    |> validate_required([:file])
   end
 end

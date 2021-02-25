@@ -52,6 +52,7 @@ defmodule Fhub.MixProject do
       {:arbor, "~> 1.1.0"},
       {:waffle, "~> 1.1.3"},
       {:waffle_ecto, "~> 0.0.9"},
+      {:plug, "~> 1.11.0"},
       {:ecto_term, in_umbrella: true},
       {:ecto_atom, in_umbrella: true},
       {:pipeline, in_umbrella: true}

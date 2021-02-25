@@ -13,6 +13,7 @@ priv/waffle/private
 
 # Where 3rd-party dependencies like ExDoc output generated docs.
 /doc/
+/priv/uploads
 
 # Ignore .fetch files in case you like to edit your project deps locally.
 /.fetch

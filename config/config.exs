@@ -41,6 +41,6 @@ config :logger, :console,
 # of this file so it overrides the configuration defined above.
 config :waffle,
   storage: Waffle.Storage.Local,
-  storage_dir_prefix: "priv/waffle/private"
+  storage_dir_prefix: "priv/"
 
 import_config "#{Mix.env()}.exs"

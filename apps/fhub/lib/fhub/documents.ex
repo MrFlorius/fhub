@@ -3,6 +3,7 @@ defmodule Fhub.Documents do
   alias Fhub.Resources.Resource
   alias Fhub.Documents.Document
   alias Fhub.Documents.Decimal
+  alias Fhub.Documents.File
   alias Fhub.Documents.Json
   alias Fhub.Documents.String
   alias Fhub.AccessControl.Transactions
@@ -11,6 +12,7 @@ defmodule Fhub.Documents do
 
   use Fhub.AccessControl.Context, for: Document
   use Fhub.AccessControl.Context, for: Decimal
+  use Fhub.AccessControl.Context, for: File
   use Fhub.AccessControl.Context, for: Json
   use Fhub.AccessControl.Context, for: String
 
@@ -36,23 +38,27 @@ defmodule Fhub.Documents do
 
       %{
         parent: document_or_app,
-        children: Enum.map(docs, fn d ->
-          case document_schema(d, actor) do
-            {:ok, %{parent: p, children: []}} -> p
-            {:ok, s} -> s
-          end
-        end)
+        children:
+          Enum.map(docs, fn d ->
+            case document_schema(d, actor) do
+              {:ok, %{parent: p, children: []}} -> p
+              {:ok, s} -> s
+            end
+          end)
       }
     end)
   end
 
   def document_fields(%Document{} = document, actor) do
-    with {:ok, d1} <- list_documents(document, actor),
-         {:ok, d2} <- list_decimals(document, actor),
-         {:ok, s} <- list_strings(document, actor),
-         {:ok, j} <- list_jsons(document, actor) do
-      {:ok, d1 ++ d2 ++ s ++ j}
-    end
+    Fhub.Repo.transaction(fn ->
+      with {:ok, d1} <- list_documents(document, actor),
+           {:ok, d2} <- list_decimals(document, actor),
+           {:ok, f} <- list_files(document, actor),
+           {:ok, s} <- list_strings(document, actor),
+           {:ok, j} <- list_jsons(document, actor) do
+        d1 ++ d2 ++ f ++ s ++ j
+      end
+    end)
   end
 
   def build_resource_for_document(parent, actor, changeset),
@@ -104,6 +110,57 @@ defmodule Fhub.Documents do
 
   def update_string(string = %String{}, attrs, actor),
     do: update_for(string, attrs, actor, &change_string_update/2, &cast_resource_for_string/2)
+
+  # File
+  def get_file_binary(%File{} = file) do
+    File.Uploader.file_binary(file)
+  end
+
+  def list_files(%Document{id: id}, actor) do
+    q =
+      from f in File,
+        join: r in Resource,
+        on: r.id == f.id,
+        where: r.parent_id == ^id,
+        select: f
+
+    Transactions.operation_filter(fn repo, _ -> {:ok, repo.all(q)} end, actor, :read)
+  end
+
+  def build_resource_for_file(parent, actor, changeset),
+    do: build_resource(parent, actor, changeset)
+
+  def create_file(attrs, actor, %Document{} = parent) do
+    t = fn repo, _ ->
+      {:ok, f} =
+        %File{}
+        |> change_file_create(attrs)
+        |> (fn c ->
+              cast_resource_for_file(c, build_resource_for_file(parent, actor, c))
+            end).()
+        |> repo.insert()
+
+      f
+      |> File.store_file_changeset(attrs)
+      |> repo.update()
+    end
+
+    Fhub.AccessControl.Transactions.operation(t, actor, :create)
+  end
+
+  def update_file(file = %File{}, attrs, actor),
+    do: update_for(file, attrs, actor, &change_file_update/2, &cast_resource_for_file/2)
+
+  def delete_file(file = %File{}, actor) do
+    case super(file, actor) do
+      {:ok, f} ->
+        File.Uploader.remove(f)
+        
+        {:ok, f}
+      x ->
+        x
+    end
+  end
 
   # Json
   def list_jsons(%Document{id: id}, actor) do

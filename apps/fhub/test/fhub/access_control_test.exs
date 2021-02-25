@@ -275,34 +275,32 @@ defmodule Fhub.AccessControlTest do
       root = root_fixture()
       root_id = root.id
 
-      assert match?(
-               %{parent_id: ^root_id},
-               TestContext.build_resource_for_resource(root, nil, nil)
-             )
+      assert %{parent_id: ^root_id} = TestContext.build_resource_for_resource(root, nil, nil)
     end
 
     test "change_resource/2 returns changeset" do
-      assert match?(%Ecto.Changeset{}, TestContext.change_resource(%Accounts.User{}, %{}))
+      assert %Ecto.Changeset{} = TestContext.change_resource(%Accounts.User{}, %{})
     end
 
     test "create_resource/2 creates resource if actor has permission" do
       root = root_fixture()
 
-      assert match?({:ok, _}, TestContext.create_resource(@valid_attrs, root))
+      assert {:ok, _} = TestContext.create_resource(@valid_attrs, root)
     end
 
-    test "delete_resource/2 deletes resource if actor has permission" do
+    test "delete_resource/2 deletes resource if actor has permission and it's associated resource" do
       root = root_fixture()
-      resource = context_resource_fixture(root)
+      resource = %{id: id} = context_resource_fixture(root)
 
-      assert match?({:ok, _}, TestContext.delete_resource(resource, root))
+      assert {:ok, _} = TestContext.delete_resource(resource, root)
+      assert_raise Ecto.NoResultsError, fn -> Resources.get_resource!(id) end
     end
 
     test "get_resource/2 returns resource if actor has access to" do
       root = root_fixture()
       resource = context_resource_fixture(root)
 
-      assert match?({:ok, _}, TestContext.get_resource(resource.id, root))
+      assert {:ok, _} = TestContext.get_resource(resource.id, root)
     end
 
     test "get_resource!/2 returns nil if resource does not exsists" do
@@ -324,10 +322,7 @@ defmodule Fhub.AccessControlTest do
       root = root_fixture()
       resource = context_resource_fixture(root)
 
-      assert match?(
-               {:ok, @update_attrs},
-               TestContext.update_resource(resource, @update_attrs, root)
-             )
+      assert {:ok, @update_attrs} = TestContext.update_resource(resource, @update_attrs, root)
     end
   end
 

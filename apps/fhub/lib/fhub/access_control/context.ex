@@ -104,7 +104,14 @@ defmodule Fhub.AccessControl.Context do
 
       def unquote(:"delete_#{s}")(s = %unquote(m){}, actor) do
         Fhub.AccessControl.Transactions.operation(
-          fn repo, _ -> repo.delete(s) end,
+          fn repo, _ ->
+            with {:ok, %Fhub.Resources.Resource{}} <-
+                   s
+                   |> Fhub.Resources.ResourceProtocol.resource(repo)
+                   |> repo.delete() do
+              {:ok, s}
+            end
+          end,
           actor,
           :delete
         )

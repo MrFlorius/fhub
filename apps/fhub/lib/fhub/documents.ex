@@ -132,17 +132,17 @@ defmodule Fhub.Documents do
 
   def create_file(attrs, actor, %Document{} = parent) do
     t = fn repo, _ ->
-      {:ok, f} =
-        %File{}
-        |> change_file_create(attrs)
-        |> (fn c ->
-              cast_resource_for_file(c, build_resource_for_file(parent, actor, c))
-            end).()
-        |> repo.insert()
-
-      f
-      |> File.store_file_changeset(attrs)
-      |> repo.update()
+      with {:ok, f} <-
+             %File{}
+             |> change_file_create(attrs)
+             |> (fn c ->
+                   cast_resource_for_file(c, build_resource_for_file(parent, actor, c))
+                 end).()
+             |> repo.insert() do
+        f
+        |> File.store_file_changeset(attrs)
+        |> repo.update()
+      end
     end
 
     Fhub.AccessControl.Transactions.operation(t, actor, :create)
@@ -155,8 +155,9 @@ defmodule Fhub.Documents do
     case super(file, actor) do
       {:ok, f} ->
         File.Uploader.remove(f)
-        
+
         {:ok, f}
+
       x ->
         x
     end

@@ -61,9 +61,28 @@ defmodule Fhub.DataCase do
       end
 
       def decimal_fixture(document, root) do
-        {:ok, decimal} = Fhub.Documents.create_decimal(%{name: "a decimal", value: 5}, root, document)
+        {:ok, decimal} =
+          Fhub.Documents.create_decimal(%{name: "a decimal", value: 5}, root, document)
 
         decimal
+      end
+
+      def file_fixture(document, root) do
+        {:ok, file} =
+          Fhub.Documents.create_file(
+            %{
+              name: "a file",
+              file: %Plug.Upload{
+                content_type: "image/gif",
+                filename: "test.gif",
+                path: "test/support/resources/test.gif"
+              }
+            },
+            root,
+            document
+          )
+
+        file
       end
 
       def json_fixture(document, root) do
@@ -73,7 +92,8 @@ defmodule Fhub.DataCase do
       end
 
       def string_fixture(document, root) do
-        {:ok, decimal} = Fhub.Documents.create_string(%{name: "a string", value: "smth"}, root, document)
+        {:ok, decimal} =
+          Fhub.Documents.create_string(%{name: "a string", value: "smth"}, root, document)
 
         decimal
       end
@@ -85,7 +105,8 @@ defmodule Fhub.DataCase do
       end
 
       def version_fixture(function, root) do
-        {:ok, version} = Fhub.Functions.create_version(%{version: 1, code: "fn x -> x end"}, root, function)
+        {:ok, version} =
+          Fhub.Functions.create_version(%{version: 1, code: "fn x -> x end"}, root, function)
 
         version
       end

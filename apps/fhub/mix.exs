@@ -18,9 +18,10 @@ defmodule Fhub.MixProject do
         ignore_modules: [
           Fhub.Repo,
           Fhub.DataCase,
+          Fhub.Documents.File.Uploader,
           Fhub.Documents.File.Uploader.Type,
           Fhub.Resources.ResourceProtocol.Any,
-          Fhub.Resources.ResourceProtocol.Fhub.Resources.Resource
+          Fhub.Resources.ResourceProtocol.Fhub.Resources.Resource,
         ]
       ]
     ]

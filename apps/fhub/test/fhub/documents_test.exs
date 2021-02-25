@@ -194,8 +194,7 @@ defmodule Fhub.DocumentsTest do
       doc = document_fixture(app, root)
       decimal = decimal_fixture(doc, root)
 
-      assert {:error, %Ecto.Changeset{}} =
-               Documents.update_decimal(decimal, @invalid_attrs, root)
+      assert {:error, %Ecto.Changeset{}} = Documents.update_decimal(decimal, @invalid_attrs, root)
 
       assert decimal.name == Documents.get_decimal!(decimal.id, root).name
     end
@@ -217,6 +216,133 @@ defmodule Fhub.DocumentsTest do
       decimal = decimal_fixture(doc, root)
 
       assert %Ecto.Changeset{} = Documents.change_decimal(decimal)
+    end
+  end
+
+  describe "file" do
+    alias Fhub.Documents.File
+
+    @valid_attrs %{
+      name: "a file",
+      file: %Plug.Upload{
+        content_type: "image/gif",
+        filename: "test.gif",
+        path: "test/support/resources/test.gif"
+      }
+    }
+    @update_attrs %{name: "updated"}
+    @invalid_attrs %{name: ""}
+
+    test "list_files/2 returns all files for document" do
+      root = root_fixture()
+      app = app_fixture(root)
+      doc = document_fixture(app, root)
+      file = %File{id: id} = file_fixture(doc, root)
+
+      assert {:ok, [%File{id: ^id}]} = Documents.list_files(doc, root)
+      File.Uploader.remove(file)
+    end
+
+    test "list_files/1 returns all files" do
+      root = root_fixture()
+      app = app_fixture(root)
+      doc = document_fixture(app, root)
+      file = %File{id: id} = file_fixture(doc, root)
+
+      assert {:ok, [%File{id: ^id}]} = Documents.list_files(root)
+      File.Uploader.remove(file)
+    end
+
+    test "get_file!/2 returns the file with given id" do
+      root = root_fixture()
+      app = app_fixture(root)
+      doc = document_fixture(app, root)
+      file = %File{id: id} = file_fixture(doc, root)
+
+      assert Documents.get_file!(id, root).id == id
+      File.Uploader.remove(file)
+    end
+
+    test "get_file_binary/1 returns binary of an actual file" do
+      root = root_fixture()
+      app = app_fixture(root)
+      doc = document_fixture(app, root)
+      file = file_fixture(doc, root)
+
+      assert Elixir.File.read(File.Uploader.file_path(file)) == Documents.get_file_binary(file)
+    end
+
+    test "create_file/3 with valid data creates a file" do
+      root = root_fixture()
+      app = app_fixture(root)
+      doc = document_fixture(app, root)
+
+      assert {:ok, %{name: "a file"} = file} = Documents.create_file(@valid_attrs, root, doc)
+      File.Uploader.remove(file)
+    end
+
+    test "create_file/3 with invalid data returns error changeset" do
+      root = root_fixture()
+      app = app_fixture(root)
+      doc = document_fixture(app, root)
+
+      assert {:error, %Ecto.Changeset{}} = Documents.create_file(@invalid_attrs, root, doc)
+    end
+
+    test "update_file/3 with valid data updates the file" do
+      root = root_fixture()
+      app = app_fixture(root)
+      doc = document_fixture(app, root)
+      file = file_fixture(doc, root)
+
+      assert {:ok, %{name: "updated"}} = Documents.update_file(file, @update_attrs, root)
+      File.Uploader.remove(file)
+    end
+
+    test "update_file/3 with invalid data returns error changeset" do
+      root = root_fixture()
+      app = app_fixture(root)
+      doc = document_fixture(app, root)
+      file = file_fixture(doc, root)
+
+      assert {:error, %Ecto.Changeset{}} = Documents.update_file(file, @invalid_attrs, root)
+
+      assert file.name == Documents.get_file!(file.id, root).name
+      File.Uploader.remove(file)
+    end
+
+    test "delete_file/2 deletes the file and an actual file" do
+      root = root_fixture()
+      app = app_fixture(root)
+      doc = document_fixture(app, root)
+      file = file_fixture(doc, root)
+
+      assert {:ok, %File{}} = Documents.delete_file(file, root)
+      assert Documents.get_file!(file.id, root) == nil
+      assert {:error, :enoent} = Documents.get_file_binary(file)
+    end
+
+    test "delete_file/2 return error and keeps the file if actor has no permission" do
+      root = root_fixture()
+      app = app_fixture(root)
+      doc = document_fixture(app, root)
+      file = file_fixture(doc, root)
+
+      assert {:error, :forbidden} = Documents.delete_file(file, file)
+      assert Documents.get_file!(file.id, root) != nil
+      assert {:ok, _} = Documents.get_file_binary(file)
+    end
+
+
+    test "change_file/2 returns a file changeset" do
+      root = root_fixture()
+      app = app_fixture(root)
+      doc = document_fixture(app, root)
+      file = file_fixture(doc, root)
+
+      assert %Ecto.Changeset{} = Documents.change_file(file)
+
+      File.Uploader.remove(file)
     end
   end
 
@@ -285,8 +411,7 @@ defmodule Fhub.DocumentsTest do
       doc = document_fixture(app, root)
       json = json_fixture(doc, root)
 
-      assert {:error, %Ecto.Changeset{}} =
-               Documents.update_json(json, @invalid_attrs, root)
+      assert {:error, %Ecto.Changeset{}} = Documents.update_json(json, @invalid_attrs, root)
 
       assert json.name == Documents.get_json!(json.id, root).name
     end
@@ -376,8 +501,7 @@ defmodule Fhub.DocumentsTest do
       doc = document_fixture(app, root)
       string = string_fixture(doc, root)
 
-      assert {:error, %Ecto.Changeset{}} =
-               Documents.update_string(string, @invalid_attrs, root)
+      assert {:error, %Ecto.Changeset{}} = Documents.update_string(string, @invalid_attrs, root)
 
       assert string.name == Documents.get_string!(string.id, root).name
     end

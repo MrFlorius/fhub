@@ -7,9 +7,13 @@ defmodule Pipeline.Remote.Elixir.Execute do
   @type step :: :execute
 
   @impl Pipeline
+
+  # TODO: implement PoW
+
   def run(%{compiled_function: _f, opts: _opts} = state) do
-    with {:ok, s} <- execute(state) do
-      {:ok, s}
+    with {:ok, state} <- execute(state),
+         state <- struct(__MODULE__, state) do
+      {:ok, state}
     else
       {:error, step, state, error} ->
         Pipeline.handle_error(__MODULE__, step, state, error)

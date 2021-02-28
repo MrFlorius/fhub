@@ -15,6 +15,8 @@ defmodule Fsigex.Extensions.GIF do
     ]
 
   def mime, do: "image/gif"
+
+  def as_atom, do: :gif
 end
 
 defmodule Fsigex.Extensions.PNG do
@@ -22,6 +24,8 @@ defmodule Fsigex.Extensions.PNG do
   def extensions, do: [".png"]
   def signatures, do: [<<0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A>>]
   def mime, do: "image/png"
+
+  def as_atom, do: :png
 end
 
 defmodule Fsigex.Extensions.JPEG do
@@ -29,6 +33,8 @@ defmodule Fsigex.Extensions.JPEG do
   def extensions, do: [".jpeg", ".jpg"]
   def signatures, do: [<<0xFF, 0xD8, 0xFF>>]
   def mime, do: "image/jpg"
+
+  def as_atom, do: :jpeg
 end
 
 defmodule Fsigex.Extensions.TIFF do
@@ -36,4 +42,6 @@ defmodule Fsigex.Extensions.TIFF do
   def extensions, do: [".tiff", ".tif"]
   def signatures, do: [<<0x49, 0x49, 0x2A, 0x00>>]
   def mime, do: "image/tiff"
+
+  def as_atom, do: :tiff
 end

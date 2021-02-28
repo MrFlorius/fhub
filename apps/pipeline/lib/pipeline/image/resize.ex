@@ -7,7 +7,7 @@ defmodule Pipeline.Image.Resize do
           :binary => binary(),
           :filename => bitstring(),
           :dimensions => {integer(), integer()},
-          :type => binary() | nil,
+          :type => module() | nil,
           :result => iodata() | nil
         }
   defstruct [:binary, :filename, :type, :dimensions, :result]
@@ -28,13 +28,13 @@ defmodule Pipeline.Image.Resize do
     end
   end
 
-  # TODO: implement PoW
+  # TODO: implement pool of workers
   defp resize(%{binary: b, dimensions: {w, h}, type: t} = state)
       when is_integer(w) and is_integer(h) and not is_nil(t) do
     {:ok, pid} = Pipeline.Image.CommandServer.start_link()
 
     :in_progress =
-      Pipeline.Image.CommandServer.execute(pid, "convert #{t}:- -resize #{w}x#{h} #{t}:-", b)
+      Pipeline.Image.CommandServer.execute(pid, "convert #{t.as_atom()}:- -resize #{w}x#{h} #{t.as_atom()}:-", b)
 
     rsp =
       receive do

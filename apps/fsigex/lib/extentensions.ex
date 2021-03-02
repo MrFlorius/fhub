@@ -1,11 +1,27 @@
+defprotocol Fsigex.Extensions.Protocol do
+  def module(_ \\ nil)
+end
+
 defmodule Fsigex.Extensions do
   @callback extensions() :: list(bitstring())
   @callback signatures() :: list(bitstring())
   @callback mime() :: bitstring()
+
+  defmacro __using__(_) do
+    quote do
+      @behaviour Fsigex.Extensions
+      defstruct []
+
+      defimpl Fsigex.Extensions.Protocol, for: __MODULE__ do
+        def module(_ \\ nil), do: __MODULE__
+      end
+    end
+  end
 end
 
+
 defmodule Fsigex.Extensions.GIF do
-  @behaviour Fsigex.Extensions
+  use Fsigex.Extensions
   def extensions, do: [".gif"]
 
   def signatures,
@@ -20,7 +36,7 @@ defmodule Fsigex.Extensions.GIF do
 end
 
 defmodule Fsigex.Extensions.PNG do
-  @behaviour Fsigex.Extensions
+  use Fsigex.Extensions
   def extensions, do: [".png"]
   def signatures, do: [<<0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A>>]
   def mime, do: "image/png"
@@ -29,7 +45,7 @@ defmodule Fsigex.Extensions.PNG do
 end
 
 defmodule Fsigex.Extensions.JPEG do
-  @behaviour Fsigex.Extensions
+  use Fsigex.Extensions
   def extensions, do: [".jpeg", ".jpg"]
   def signatures, do: [<<0xFF, 0xD8, 0xFF>>]
   def mime, do: "image/jpg"
@@ -38,7 +54,7 @@ defmodule Fsigex.Extensions.JPEG do
 end
 
 defmodule Fsigex.Extensions.TIFF do
-  @behaviour Fsigex.Extensions
+  use Fsigex.Extensions
   def extensions, do: [".tiff", ".tif"]
   def signatures, do: [<<0x49, 0x49, 0x2A, 0x00>>]
   def mime, do: "image/tiff"

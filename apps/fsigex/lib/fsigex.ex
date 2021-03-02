@@ -1,12 +1,7 @@
 defmodule Fsigex do
-  alias Fsigex.Extensions.{GIF, JPEG, PNG, TIFF}
-
-  # TODO: Research if there is a way to add all submodule automatically
-  @modules [GIF, JPEG, PNG, TIFF]
-
   def by_binary_signature(binary) do
     r =
-      @modules
+      extensions()
       |> Enum.filter(fn x ->
         x.signatures()
         |> Enum.any?(fn p -> String.starts_with?(binary, p) end)
@@ -22,7 +17,7 @@ defmodule Fsigex do
 
   def by_extname(extname) do
     r =
-      @modules
+      extensions()
       |> Enum.filter(fn x ->
         x.extensions()
         |> Enum.any?(fn e -> e == extname end)
@@ -35,9 +30,15 @@ defmodule Fsigex do
   end
 
   def by_mime(mime) do
-    case Enum.filter(@modules, fn x -> x.mime() == mime end) do
+    case Enum.filter(extensions(), fn x -> x.mime() == mime end) do
       [] -> {:error, :not_found}
       [x] -> {:ok, x}
     end
+  end
+
+  def extensions do
+    {:consolidated, m} = Fsigex.Extensions.Protocol.__protocol__(:impls)
+
+    m
   end
 end

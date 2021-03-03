@@ -9,7 +9,8 @@ defmodule Pipeline.Remote.Elixir.Compile do
   @impl Pipeline
   @spec run(state) :: {:ok, state} | {:error, Pipeline.Error.t()}
 
-  # TODO: implement PoW
+  # TODO: implement pool of workers
+  # TODO: Support for python, lua, webassm
 
   def run(%{code: code} = state) when is_bitstring(code) do
     with {:ok, state} <- check(state),

@@ -8,7 +8,7 @@ defmodule Pipeline.Remote.Elixir.Execute do
 
   @impl Pipeline
 
-  # TODO: implement PoW
+  # TODO: implement pool of workers
 
   def run(%{compiled_function: _f, opts: _opts} = state) do
     with {:ok, state} <- execute(state),

@@ -24,14 +24,14 @@ defmodule Fsigex do
       end)
 
     case r do
-      [] -> {:error, :not_found}
+      [] -> {:error, :not_defined}
       [x] -> {:ok, x}
     end
   end
 
   def by_mime(mime) do
     case Enum.filter(extensions(), fn x -> x.mime() == mime end) do
-      [] -> {:error, :not_found}
+      [] -> {:error, :not_defined}
       [x] -> {:ok, x}
     end
   end

@@ -11,8 +11,7 @@ defmodule Pipeline.Remote.Elixir.Execute do
   # TODO: implement pool of workers
 
   def run(%{compiled_function: _f, opts: _opts} = state) do
-    with {:ok, state} <- execute(state),
-         state <- struct(__MODULE__, state) do
+    with {:ok, state} <- execute(state) do
       {:ok, state}
     else
       {:error, step, state, error} ->

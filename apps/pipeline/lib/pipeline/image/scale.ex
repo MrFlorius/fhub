@@ -3,14 +3,13 @@ defmodule Pipeline.Image.Scale do
 
   @behaviour Pipeline
 
-  @type state :: %__MODULE__{
+  @type state :: %{
           :binary => binary(),
           :filename => bitstring(),
           :scale => float(),
           :type => module() | nil,
           :result => iodata() | nil
         }
-  defstruct [:binary, :filename, :type, :scale, :result]
 
   @type step :: :validate_image | :resize
 
@@ -19,8 +18,7 @@ defmodule Pipeline.Image.Scale do
   def run(state) do
     with {:ok, state} <- validate_image(state),
          {:ok, state} <- put_type(state),
-         {:ok, state} <- scale(state),
-         state <- struct(__MODULE__, state) do
+         {:ok, state} <- scale(state) do
       {:ok, state}
     else
       {:error, step, state, error} ->

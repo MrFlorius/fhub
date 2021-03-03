@@ -4,8 +4,6 @@ defmodule Pipeline.Remote.Elixir.Compile do
   @type state :: %{code: bitstring, compiled_function: function}
   @type step :: :check | :compile
 
-  defstruct [:code, :compiled_function]
-
   @impl Pipeline
   @spec run(state) :: {:ok, state} | {:error, Pipeline.Error.t()}
 
@@ -14,12 +12,11 @@ defmodule Pipeline.Remote.Elixir.Compile do
 
   def run(%{code: code} = state) when is_bitstring(code) do
     with {:ok, state} <- check(state),
-         {:ok, state} <- compile(state),
-         state <- struct(__MODULE__, state) do
+         {:ok, state} <- compile(state) do
       {:ok, state}
     else
       {:error, step, state, error} ->
-        Pipeline.handle_error(__MODULE__, step, struct(__MODULE__, state), error)
+        Pipeline.handle_error(__MODULE__, step, state, error)
     end
   end
 

@@ -11,7 +11,19 @@ defmodule Fsigex.MixProject do
       lockfile: "../../mix.lock",
       elixir: "~> 1.11",
       start_permanent: Mix.env() == :prod,
-      deps: deps()
+      deps: deps(),
+      test_coverage: [
+        ignore_modules: [
+          Fsigex.Extensions.GIF,
+          Fsigex.Extensions.JPEG,
+          Fsigex.Extensions.PNG,
+          Fsigex.Extensions.TIFF,
+          Fsigex.Extensions.Protocol.Fsigex.Extensions.GIF,
+          Fsigex.Extensions.Protocol.Fsigex.Extensions.JPEG,
+          Fsigex.Extensions.Protocol.Fsigex.Extensions.PNG,
+          Fsigex.Extensions.Protocol.Fsigex.Extensions.TIFF
+        ]
+      ]
     ]
   end
 

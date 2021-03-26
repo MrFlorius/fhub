@@ -10,6 +10,7 @@ defmodule Fsigex.MixProject do
       deps_path: "../../deps",
       lockfile: "../../mix.lock",
       elixir: "~> 1.11",
+      consolidate_protocols: true,
       start_permanent: Mix.env() == :prod,
       deps: deps(),
       test_coverage: [

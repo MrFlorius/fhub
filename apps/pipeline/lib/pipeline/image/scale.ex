@@ -28,7 +28,7 @@ defmodule Pipeline.Image.Scale do
 
   # TODO: implement pool of workers
   defp scale(%{binary: b, scale: s, type: t} = state)
-       when is_integer(s) and not is_nil(t) do
+       when is_number(s) and not is_nil(t) do
     {:ok, pid} = Pipeline.Image.CommandServer.start_link()
 
     :in_progress = Pipeline.Image.CommandServer.execute(pid, "convert #{t.as_atom()}:- -resize #{s*100}% #{t.as_atom()}:-", b)
